@@ -37,7 +37,7 @@ export default function PanoramaScene() {
   return (
     <div className="w-screen h-screen absolute top-0 right-0 box-border">
       <div className="h-full box-border relative">
-        <div className="bg-white/60 z-17699380 w-[250px] inset-0 m-4 p-4 absolute box-border ml-auto right-0 border-1 border-[#e4e4e455] rounded-xl" style={{ backdropFilter: "blur(20px)" }}>
+        <div className="bg-white/80 z-[2147483647] w-[250px] inset-0 m-4 p-4 absolute box-border ml-auto right-0 border-1 border-[#e4e4e455] rounded-xl" style={{ backdropFilter: "blur(20px)" }}>
           <div className="flex flex-col justify-between h-full">
             <h1 className="text-2xl font-bold">B Block</h1>
             <div>
@@ -63,62 +63,50 @@ export default function PanoramaScene() {
           {/* 360 Image */}
           <Panorama />
 
-          {/* Clickable Button */}
-          <Html position={[0, 0, 0]}>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Button className="cursor-pointer hover:scale-[1.1]" variant="outline">B Block</Button>
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="flex justify-between items-center space-x-4">
-                <FlaskConical size={48}/>
-                <div className="space-y-1">
-                  <div className="flex flex-row items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold whitespace-nowrap">Science Block</h4>
-                    <Badge variant={'outline'}>5 Subjects</Badge>
+          {/* Clickable Button - B Block */}
+          <Html position={[0, 0, -4.5]} center>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button className="cursor-pointer hover:scale-[1.1]" variant="outline">B Block</Button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className="flex justify-between items-center space-x-4">
+                  <FlaskConical size={48}/>
+                  <div className="space-y-1">
+                    <div className="flex flex-row items-center justify-between gap-2">
+                      <h4 className="text-sm font-semibold whitespace-nowrap">Science Block</h4>
+                      <Badge variant={'outline'}>5 Subjects</Badge>
+                    </div>
+                    <p className="text-sm">
+                      B block is where most of the science related classes are held.
+                    </p>
                   </div>
-                  <p className="text-sm">
-                    B block is where most of the science related classes are held.
-                  </p>
-                  {/* <div className="flex items-center pt-2 opacity-60 flex-row gap-1">
-                    <NotebookText size={12}/>{" "}
-                    <span className="text-xs">
-                      5 Subjects
-                    </span>
-                  </div> */}
                 </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+              </HoverCardContent>
+            </HoverCard>
           </Html>
 
-
-          <Html position={[5, 60, 40]}>
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Button className="cursor-pointer hover:scale-[1.1]" variant="outline">GS Block</Button>
-            </HoverCardTrigger>
-            <HoverCardContent>
-              <div className="flex justify-between items-center space-x-4">
-                <NotebookPen size={48}/>
-                <div className="space-y-1">
-                  <div className="flex flex-row items-center justify-between gap-2">
-                    <h4 className="text-sm font-semibold whitespace-nowrap">Writing Block</h4>
-                    <Badge variant={'outline'}>4 Subjects</Badge>
+          {/* Clickable Button - GS Block */}
+          <Html position={[2, 1, -4]} center>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button className="cursor-pointer hover:scale-[1.1]" variant="outline">GS Block</Button>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                <div className="flex justify-between items-center space-x-4">
+                  <NotebookPen size={48}/>
+                  <div className="space-y-1">
+                    <div className="flex flex-row items-center justify-between gap-2">
+                      <h4 className="text-sm font-semibold whitespace-nowrap">Writing Block</h4>
+                      <Badge variant={'outline'}>4 Subjects</Badge>
+                    </div>
+                    <p className="text-sm">
+                      GS block is where most of the English and language-related classes are held.
+                    </p>
                   </div>
-                  <p className="text-sm">
-                    GS block is where most of the englsh and language related classes are held.
-                  </p>
-                  {/* <div className="flex items-center pt-2 opacity-60 flex-row gap-1">
-                    <NotebookText size={12}/>{" "}
-                    <span className="text-xs">
-                      5 Subjects
-                    </span>
-                  </div> */}
                 </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+              </HoverCardContent>
+            </HoverCard>
           </Html>
         </Canvas>
       </div>
