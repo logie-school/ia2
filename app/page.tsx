@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge"
 import Link from 'next/link'
 import { motion } from "framer-motion"
 import './pano.css'
+import Loader from "@/components/loader"
 
 function Panorama({ onLoad }: { onLoad: () => void }) {
   const texture = useLoader(TextureLoader, "/360_2.jpg");
@@ -52,10 +53,7 @@ export default function PanoramaScene() {
 
   return (
     <div className="w-[100svw] h-[100svh] absolute top-0 right-0 box-border overflow-hidden">
-      <div id="loader" style={{ transition: '0.5s' }} className="select-none w-screen h-screen absolute top-0 right-0 bg-[#dddddd] z-[2147483647] flex items-center justify-center">
-        <div className="loader"></div>
-        <span className="absolute translate-y-20 opacity-50 font-mono">loading</span>
-      </div>
+      <Loader/>
       <div className="h-full box-border relative">
         <div
           id="sidebar"

@@ -1,7 +1,20 @@
 "use client";
 
 import { GoogleMap, Marker } from '@react-google-maps/api';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { VolleyballIcon } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { PanoNode } from "@/components/pano-node";
+import { InfoNode } from "@/components/info-node";
+import { CustomNode } from '@/components/custom-node';
 
 const containerStyle = {
   width: '100%',
@@ -10,8 +23,8 @@ const containerStyle = {
 
 // Centre of school initial view
 const initialCenter = {
-  lat: -26.409034816004784,
-  lng: 153.09985498109376,
+  lat: -26.409098044004523,
+  lng: 153.09898862758197,
 };
 
 // Calculate bounds for a 300-meter radius
@@ -21,7 +34,7 @@ const metersToDegrees = (meters: number, latitude: number) => {
   return { latDelta, lngDelta };
 };
 
-const { latDelta, lngDelta } = metersToDegrees(300, initialCenter.lat);
+const { latDelta, lngDelta } = metersToDegrees(1000, initialCenter.lat);
 
 const bounds = {
   north: initialCenter.lat + latDelta,
@@ -30,15 +43,70 @@ const bounds = {
   west: initialCenter.lng - lngDelta,
 };
 
-const nodes = [
-  { id: 1, lat: -27.4698, lng: 153.0251, label: "Brisbane" },
-  { id: 2, lat: -33.8688, lng: 151.2093, label: "Sydney" },
-];
+// Suppress specific Google Maps API errors
+const originalConsoleError = console.error;
 
-export default function MapComponent() {
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    args[0].includes('BillingNotEnabledMapError')
+  ) {
+    // Ignore the BillingNotEnabledMapError
+    return;
+  }
+  // Call the original console.error for other errors
+  originalConsoleError(...args);
+};
+
+export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
   const [center, setCenter] = useState(initialCenter);
-  const [zoom, setZoom] = useState(18); // Initial zoom level
+  const [zoom, setZoom] = useState(19); // Initial zoom level
+  const [minZoom, setMinZoom] = useState(15); // Configurable minimum zoom level
+  const [maxZoom, setMaxZoom] = useState(21); // Configurable maximum zoom level
+  const [mapType, setMapType] = useState<'roadmap' | 'satellite'>(() => {
+    return (localStorage.getItem('mapType') as 'roadmap' | 'satellite') || 'satellite';
+  });
   const mapRef = useRef<google.maps.Map | null>(null);
+
+  useEffect(() => {
+    // Save the map type to localStorage whenever it changes
+    localStorage.setItem('mapType', mapType);
+  }, [mapType]);
+
+  useEffect(() => {
+    // Function to remove elements containing the target text
+    const removeElements = () => {
+      const elements = document.querySelectorAll('span');
+      elements.forEach((element) => {
+        if (element.textContent?.trim() === 'For development purposes only') {
+          element.remove();
+        }
+      });
+    };
+
+    // Initial cleanup
+    removeElements();
+
+    // Set up a MutationObserver to watch for dynamically added elements
+    const observer = new MutationObserver(() => {
+      removeElements();
+    });
+
+    // Observe changes in the DOM
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    // Cleanup observer on component unmount
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('Page has fully loaded.');
+  }, []);
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
@@ -55,37 +123,82 @@ export default function MapComponent() {
   const handleZoomChanged = () => {
     if (mapRef.current) {
       const currentZoom = mapRef.current.getZoom();
-      setZoom(currentZoom || 0); // Update zoom state
-      console.log(`Current zoom level: ${currentZoom}`);
+      if (currentZoom !== undefined) {
+        if (currentZoom < minZoom) {
+          mapRef.current.setZoom(minZoom); // Force zoom to minZoom
+          setZoom(minZoom);
+          console.warn(`Zoom level adjusted to minZoom (${minZoom}).`);
+        } else if (currentZoom > maxZoom) {
+          mapRef.current.setZoom(maxZoom); // Force zoom to maxZoom
+          setZoom(maxZoom);
+          console.warn(`Zoom level adjusted to maxZoom (${maxZoom}).`);
+        } else {
+          setZoom(currentZoom); // Update zoom state
+          console.log(`Current zoom level: ${currentZoom}`);
+        }
+      }
     }
   };
 
   const mapOptions = {
-    minZoom: 17, // Set minimum zoom level
-    maxZoom: 21, // Set maximum zoom level
+    minZoom, // Use the state variable for minimum zoom
+    maxZoom, // Use the state variable for maximum zoom
     restriction: {
       latLngBounds: bounds, // Restrict map movement within these bounds
       strictBounds: true,   // Prevent the user from panning outside the bounds
     },
+    mapTypeId: mapType, // Set the map type
+  };
+
+  console.log('Map options:', mapOptions);
+
+  const handleIdle = () => {
+    console.log('Map is idle.');
+    if (onIdle) {
+      onIdle(); // Call the passed onIdle function
+    }
   };
 
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={zoom} // Set initial zoom level
-      onClick={handleMapClick} // Capture click events
-      onLoad={handleOnLoad} // Capture map instance
-      onZoomChanged={handleZoomChanged} // Log zoom level when it changes
-      options={mapOptions} // Set min/max zoom levels and movement restriction
-    >
-      {nodes.map((node) => (
-        <Marker
-          key={node.id}
-          position={{ lat: node.lat, lng: node.lng }}
-          onClick={() => console.log(`Marker clicked: ${node.label}`)}
-        />
-      ))}
-    </GoogleMap>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      
+      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000 }}>
+        <Select
+          value={mapType}
+          onValueChange={(value) => setMapType(value as 'roadmap' | 'satellite')}
+        >
+          <SelectTrigger>
+            <SelectValue>{mapType === 'roadmap' ? 'Map View' : 'Satellite View'}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="roadmap">Map View</SelectItem>
+            <SelectItem value="satellite">Satellite View</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={zoom} // Set initial zoom level
+        onClick={handleMapClick} // Capture click events
+        onLoad={handleOnLoad} // Capture map instance
+        onZoomChanged={handleZoomChanged} // Log zoom level when it changes
+        options={mapOptions} // Set min/max zoom levels and movement restriction
+        onIdle={handleIdle} // Pass the handler here
+      >
+        <PanoNode position={{ lat: -26.4095080970424, lng: 153.09906042235346 }} href='/' />
+
+        {/* i need to put this data in a database later on instead of using the website. */}
+        <InfoNode position={{ lat: -26.409631004423808, lng: 153.09882796891992 }} nodeLetter='I' title='I Block' description='Junior classrooms and senior exam block, newest block.' type='School classrooms' />
+        <InfoNode position={{ lat: -26.409233438867815, lng: 153.0988770611079 }} nodeLetter='K' title='K Block' description='Learnig support block.' type='School classrooms' />
+        <InfoNode position={{ lat: -26.40969740646617, lng: 153.09934078533985 }} nodeLetter='J' title='J Block' description='Mathematics block.' type='School classrooms' />
+        <InfoNode position={{ lat: -26.40928450445418, lng: 153.09928638704162 }} nodeLetter='GS' title='GS Block' description='English and writing block.' type='School classrooms' />
+
+        <CustomNode position={{ lat: -26.408705184759523, lng: 153.0989981543763 }} title='Backetball Courts' description='lorem ipsum.' type='Sports facility' bgColor='#c76300' fgColor='#fff'>
+          <VolleyballIcon/>
+        </CustomNode>
+
+      </GoogleMap>
+    </div>
   );
 }

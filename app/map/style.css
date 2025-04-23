@@ -6,10 +6,21 @@
     display: none !important;
 }
 
-body > div:nth-child(21) > div > div:nth-child(3) {
+button {
+    background-color: white !important;
+}
+
+/* hide annoying api error popups */
+div[style*="background-color: white"][style*="position: absolute"][style*="z-index: 1"] {
     display: none !important;
 }
 
-body > div:nth-child(21) > div > div:nth-child(2) {
+/* hide google icon */
+a[title="Open this area in Google Maps (opens a new window)"] {
+    display: none !important;
+}
+
+/* hide fullscreen button */
+button[title="Toggle fullscreen view"] {
     display: none !important;
 }
