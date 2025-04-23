@@ -1,0 +1,15 @@
+.gmnoprint {
+    display: none !important;
+}
+
+.gm-style-cc {
+    display: none !important;
+}
+
+body > div:nth-child(21) > div > div:nth-child(3) {
+    display: none !important;
+}
+
+body > div:nth-child(21) > div > div:nth-child(2) {
+    display: none !important;
+}
