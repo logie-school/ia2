@@ -2,7 +2,7 @@
 
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useState, useRef, useEffect } from 'react';
-import { VolleyballIcon } from 'lucide-react';
+import { Book, BookOpenTextIcon, VolleyballIcon } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -15,6 +15,18 @@ import {
 import { PanoNode } from "@/components/pano-node";
 import { InfoNode } from "@/components/info-node";
 import { CustomNode } from '@/components/custom-node';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 
 const containerStyle = {
   width: '100%',
@@ -162,7 +174,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       
-      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000 }}>
+      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 49 }}>
         <Select
           value={mapType}
           onValueChange={(value) => setMapType(value as 'roadmap' | 'satellite')}
@@ -175,6 +187,40 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
             <SelectItem value="satellite">Satellite View</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 49 }}>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className='bg-primary/80 backdrop-blur-sm'>Need help?</Button>
+          </SheetTrigger>
+          <SheetContent className='rounded'>
+            <SheetHeader>
+              <SheetTitle className='text-2xl font-bold'>Map Help</SheetTitle>
+              <SheetDescription>
+                Learn and understand how to use the map.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 p-4">
+              <div className="items-center gap-4">
+                <Label className="text-right text-lg">
+                  How do I navigate the map?
+                </Label>
+                <span className='opacity-50 text-sm'>Click and drag to move the view and scroll to zoom in and out.</span>
+              </div>
+              <div className="items-center gap-4">
+                <Label className="text-right text-lg">
+                  Whare are these circles?
+                </Label>
+                <span className='opacity-50 text-sm'>The circles are clickable nodes which have different uses, a camera icon is a 360° image, a letter indicates what block and all of the other nodes are custom nodes, hover on the nodes for more information.</span>
+              </div>
+            </div>
+            <SheetFooter>
+              <SheetClose asChild>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
       <GoogleMap
         mapContainerStyle={containerStyle}
@@ -193,10 +239,16 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
         <InfoNode position={{ lat: -26.409233438867815, lng: 153.0988770611079 }} nodeLetter='K' title='K Block' description='Learnig support block.' type='School classrooms' />
         <InfoNode position={{ lat: -26.40969740646617, lng: 153.09934078533985 }} nodeLetter='J' title='J Block' description='Mathematics block.' type='School classrooms' />
         <InfoNode position={{ lat: -26.40928450445418, lng: 153.09928638704162 }} nodeLetter='GS' title='GS Block' description='English and writing block.' type='School classrooms' />
+        <InfoNode position={{ lat: -26.409674473435988, lng: 153.09982825007637 }} nodeLetter='C' title='C Block' description='Italian and support block.' type='School classrooms' />
 
         <CustomNode position={{ lat: -26.408705184759523, lng: 153.0989981543763 }} title='Backetball Courts' description='lorem ipsum.' type='Sports facility' bgColor='#c76300' fgColor='#fff'>
           <VolleyballIcon/>
         </CustomNode>
+
+        <CustomNode position={{ lat: -26.409235890126865, lng: 153.09982243545247 }} title='Resource Centre' description='lorem ipsum.' type='Resource facility' bgColor='#c76300' fgColor='#fff'>
+          <BookOpenTextIcon/>
+        </CustomNode>
+
 
       </GoogleMap>
     </div>

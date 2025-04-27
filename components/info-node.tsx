@@ -1,4 +1,4 @@
-import { Info } from "lucide-react"; // Import Lucide icons
+import { Info } from "lucide-react";
 import { OverlayView } from "@react-google-maps/api";
 import {
   HoverCard,

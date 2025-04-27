@@ -25,7 +25,7 @@ export function PanoNode({ position, href }: { position: google.maps.LatLngLiter
                     className="map-node"
                     onClick={() => console.log("PanoNode clicked!")}
                 >
-                    <Camera color="white" size={20} />
+                    <Camera color="white" />
                 </div>
             </a>
         </HoverCardTrigger>

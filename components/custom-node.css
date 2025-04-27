@@ -23,7 +23,6 @@
     transition: 0.2s; /* Keep the transition for hover effects */
     user-select: none;
     text-align: center;
-    z-index: 9999999999;
 
 }
 
