@@ -27,7 +27,7 @@ export function InfoNode({
       position={position}
       mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET} // Ensures the overlay is interactive
     >
-      <HoverCard openDelay={200}>
+      <HoverCard openDelay={0} closeDelay={0}>
         <HoverCardTrigger asChild>
           <div className="info-node-wrapper" draggable="false">
             <div

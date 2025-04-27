@@ -1,0 +1,67 @@
+.nav-bar {
+  width: 90% !important;
+}
+
+@media (max-width: 900px) {
+    .nav-bar {
+      width: 90% !important;
+    }
+  
+    .burger {
+      display: block !important;
+      visibility: visible !important;
+    }
+  
+    .nav-buttons {
+      display: none !important;
+    }
+
+    .hero-content {
+        width: 90% !important;
+    }
+
+    .nav-title {
+      display: none !important;
+    }
+}
+
+/* .nav {
+    opacity: 0.5;
+    top: -40px;
+    animation: load 0.5s cubic-bezier(.17,.67,.2,1) forwards;
+}
+
+@keyframes load {
+    0% {
+        top: -40px;
+        opacity: 0;
+    }
+    100% {
+        top: 0;
+        opacity: 1;
+    }
+} */
+
+.nav-logo:hover .nav-img {
+  scale: 1.1;
+  transition: 0.2s;
+}
+
+.nav-logo {
+  transition: 0.2s;
+}
+
+
+.nav-logo:hover {
+  gap: 20px;
+  transition: 0.2s;
+}
+
+.nav-logo:active {
+  opacity: 0.5;
+  transition: 0s;
+}
+
+.nav-img {
+  transition: 0.2s;
+}

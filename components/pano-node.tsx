@@ -18,7 +18,7 @@ export function PanoNode({ position, href }: { position: google.maps.LatLngLiter
       position={position}
       mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET} // Ensures the overlay is interactive
     >
-      <HoverCard openDelay={200}>
+      <HoverCard openDelay={0} closeDelay={0}>
         <HoverCardTrigger asChild>
             <a className="map-node-wrapper" draggable="false" href={`${href}`}>
                 <div

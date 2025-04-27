@@ -5,7 +5,7 @@ import { Sphere, Html, OrbitControls } from "@react-three/drei";
 import { TextureLoader } from "three";
 import { useState, useEffect } from "react";
 
-import { ArrowRight, Book, Building, CalendarIcon, FlaskConical, Info, MapIcon, NotebookPen, NotebookText, Paintbrush, Paintbrush2Icon, PenIcon } from "lucide-react"
+import { ArrowRight, Book, Building, CalendarIcon, FileUser, FlaskConical, Info, MapIcon, NotebookPen, NotebookText, Paintbrush, Paintbrush2Icon, PenIcon } from "lucide-react"
  
 import {
   Avatar,
@@ -63,6 +63,11 @@ export default function PanoramaScene() {
           <div className="flex flex-col justify-between h-full">
             <h1 className="text-2xl font-bold">GS Block</h1>
             <div>
+              <Link href="/enroll?id=ENG12">
+                <Button variant={"outline"} className="w-full">
+                  Enroll <FileUser />
+                </Button>
+              </Link>
               <Link href="/map">
                 <Button variant={"outline"} className="w-full">
                   Back to map <MapIcon />

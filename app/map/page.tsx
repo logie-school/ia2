@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 const MapComponent = dynamic(() => import('./map'), { ssr: false });
 
-export default function Page() {
+export default function MapPage() {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
