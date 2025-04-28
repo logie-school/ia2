@@ -57,14 +57,14 @@ function Navbar() {
                       </a>
                     </NavigationMenuLink>
                   </li>
-                  <ListItem href="#" title="Course Enrollment">
+                  <ListItem href="/enroll" title="Course Enrollment">
                     Enroll students into certain courses.
+                  </ListItem>
+                  <ListItem href="/" title="Virtual Tour">
+                    Get placed into a random location in the school and explore.
                   </ListItem>
                   <ListItem href="#" title="something">
                     something
-                  </ListItem>
-                  <ListItem href="#" title="something">
-                  something
                   </ListItem>
                 </ul>
               </NavigationMenuContent>

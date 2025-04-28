@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className="antialiased vsc-initialized">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

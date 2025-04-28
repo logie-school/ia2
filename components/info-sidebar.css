@@ -1,0 +1,7 @@
+
+.sidebar-hidden {
+    transform: translateX(40px);
+    opacity: 0;
+    pointer-events: none;
+    filter: blur(10px);
+  }

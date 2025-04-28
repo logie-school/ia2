@@ -32,7 +32,19 @@ export function InfoNode({
           <div className="info-node-wrapper" draggable="false">
             <div
               className="info-node"
-              onClick={() => console.log("PanoNode clicked!")}
+              onClick={() => {
+                const sidebar = document.getElementById("sidebar");
+                if (sidebar) {
+                  if (sidebar.classList.contains("sidebar-hidden")) {
+                    sidebar.classList.remove("sidebar-hidden");
+                    sidebar.classList.add("sidebar-visible");
+                  }
+                  else {
+                    sidebar.classList.remove("sidebar-visible");
+                    sidebar.classList.add("sidebar-hidden");
+                  }
+                }
+              }}
             >
               <span className="text-lg text-white font-medium">{nodeLetter}</span>
             </div>

@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sheet"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { InfoSideBar } from '@/components/info-sidebar';
 
 const containerStyle = {
   width: '100%',
@@ -160,6 +161,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
       strictBounds: true,   // Prevent the user from panning outside the bounds
     },
     mapTypeId: mapType, // Set the map type
+    disableDoubleClickZoom: true
   };
 
   console.log('Map options:', mapOptions);
@@ -172,8 +174,13 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      
+
+    <div className='overflow-hidden'>
+
+    <InfoSideBar />
+
+    <div className='absolute top-0 overflow-hidden' style={{ width: '100svw', height: '100svh' }}>
+
       <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 49 }}>
         <Select
           value={mapType}
@@ -194,7 +201,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
           <SheetTrigger asChild>
             <Button className='bg-primary/80 backdrop-blur-sm'>Need help?</Button>
           </SheetTrigger>
-          <SheetContent className='rounded'>
+          <SheetContent className='rounded-2xl'>
             <SheetHeader>
               <SheetTitle className='text-2xl font-bold'>Map Help</SheetTitle>
               <SheetDescription>
@@ -241,16 +248,20 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
         <InfoNode position={{ lat: -26.40928450445418, lng: 153.09928638704162 }} nodeLetter='GS' title='GS Block' description='English and writing block.' type='School classrooms' />
         <InfoNode position={{ lat: -26.409674473435988, lng: 153.09982825007637 }} nodeLetter='C' title='C Block' description='Italian and support block.' type='School classrooms' />
 
-        <CustomNode position={{ lat: -26.408705184759523, lng: 153.0989981543763 }} title='Backetball Courts' description='lorem ipsum.' type='Sports facility' bgColor='#c76300' fgColor='#fff'>
+        <CustomNode position={{ lat: -26.408705184759523, lng: 153.0989981543763 }} title='Backetball Courts' description='Two full size undercover courts.' type='Sports facility' bgColor='#c76300' fgColor='#fff'>
           <VolleyballIcon/>
         </CustomNode>
 
-        <CustomNode position={{ lat: -26.409235890126865, lng: 153.09982243545247 }} title='Resource Centre' description='lorem ipsum.' type='Resource facility' bgColor='#c76300' fgColor='#fff'>
+        <CustomNode position={{ lat: -26.409235890126865, lng: 153.09982243545247 }} title='Resource Centre' description='Students can borrow resources and get tech help.' type='Resource facility' bgColor='#c76300' fgColor='#fff'>
           <BookOpenTextIcon/>
         </CustomNode>
 
 
       </GoogleMap>
+      </div>
+
     </div>
+    
+    
   );
 }
