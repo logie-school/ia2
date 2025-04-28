@@ -14,9 +14,9 @@ export function InfoSideBar() {
           <div className="flex flex-col justify-between h-full">
             <h1 className="text-2xl font-bold">Lorem Ipsum</h1>
             <div className="flex flex-col gap-2">
-              <Link href="/enroll?id=ENG12">
+              <Link href="/enrol?id=ENG12">
                 <Button variant={"outline"} className="w-full justify-start hover:gap-4 cursor-pointer">
-                    <FileUser /> Enroll
+                    <FileUser /> Enrol
                 </Button>
               </Link>
               <Link href="/map">

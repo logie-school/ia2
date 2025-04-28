@@ -1,7 +1,7 @@
 "use client"
  
 import * as React from "react"
-import { Book, BoxIcon, Camera, Contact, DollarSign, FileUser, HomeIcon, Info, LogIn, MapIcon, MenuIcon, Minus, Package, Plus, TreePine } from "lucide-react"
+import { Book, BookMarked, BoxIcon, Camera, Contact, DollarSign, FileUser, HomeIcon, Info, LogIn, MapIcon, MenuIcon, Minus, Package, Plus, TreePine } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -50,9 +50,17 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/enroll' className="font-[500]">
+                <Link href='/enrol' className="font-[500]">
                   <FileUser className="opacity-50 items-center flex justify-center" size={16} />
                   Course Enrollment
+                </Link>
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
+                <Link href='/enrol' className="font-[500]">
+                  <BookMarked className="opacity-50 items-center flex justify-center" size={16} />
+                  Courses
                 </Link>
               </Button>
             </DrawerClose>

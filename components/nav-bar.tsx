@@ -19,9 +19,13 @@ import { Burger } from "@/components/burger"
 import './nav-bar.css'
 import { motion } from "framer-motion"
 
-function Navbar() {
+interface NavbarProps {
+  bgColor?: string;
+}
+
+function Navbar({  bgColor,}: NavbarProps) {
   return (
-    <motion.div className="z-[999] w-full mx-auto border-b-1 shadow-xl p-3 justify-center flex-row flex items-center fixed top-0 bg-background/50 backdrop-blur-sm nav" suppressHydrationWarning initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [.7,0,.24,.99], delay: 0 }}>
+    <motion.div className="z-[999] w-screen mx-auto border-b-1 shadow-xl p-3 justify-center flex-row flex items-center fixed top-0 left-0 bg-background/50 backdrop-blur-sm nav" suppressHydrationWarning initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [.7,0,.24,.99], delay: 0 }} style={{backgroundColor: bgColor}}>
       <div className="w-[60%] flex items-center justify-between nav-bar">
         <a className="nav-logo font-bold text-xl flex flex-row items-center gap-4" href="/">
           <img src="/sbshs.webp" alt="logo" className="nav-img aspect-square h-[64px]" style={{ filter: "drop-shadow(0 0 10px #0005)" }} />
@@ -38,7 +42,7 @@ function Navbar() {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent">Links</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent">Explore</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-3 md:w-[300px] lg:w-[600px] lg:grid-cols-[.75fr_1fr]">
                   <li className="row-span-3">
@@ -57,14 +61,14 @@ function Navbar() {
                       </a>
                     </NavigationMenuLink>
                   </li>
-                  <ListItem href="/enroll" title="Course Enrollment">
-                    Enroll students into certain courses.
-                  </ListItem>
-                  <ListItem href="/" title="Virtual Tour">
-                    Get placed into a random location in the school and explore.
+                  <ListItem href="/enrol" title="Course Enrolment">
+                    Enrol students into certain courses.
                   </ListItem>
                   <ListItem href="/courses" title="Courses">
                     Get information on the courses at the school.
+                  </ListItem>
+                  <ListItem href="/" title="Virtual Tour">
+                    Get placed into a random location in the school and explore.
                   </ListItem>
                 </ul>
               </NavigationMenuContent>

@@ -1,0 +1,39 @@
+@import url("https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css");
+
+
+/* change style depending on screen size */
+@media (max-width: 750px) {
+    .hero-content {
+        width: 90% !important;
+        padding: 0;
+    }
+
+    .offer {
+        padding: 0px !important;
+    }
+
+
+    .offer-content {
+        width: 90% !important;
+        padding: 30px;
+    }
+    
+    .hero-content h1 {
+        font-size: 42px;
+    }
+
+}
+
+/* .pricing-tier {
+    width: 100%;
+    display: flex;
+} */
+
+.skill-icon-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    font-size: 64px;
+}

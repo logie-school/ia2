@@ -36,7 +36,7 @@ import {
 
 import './style.css'
 
-export default function EnrollPage() {
+export default function EnrolPage() {
 
     useEffect(() => {
         const handlePageLoad = () => {
@@ -59,9 +59,9 @@ export default function EnrollPage() {
       <Navbar />
       <div>
         <div className="w-full mt-[89] p-16 absolute top-0 right-0 box-border overflow-hidden items-center justify-center flex flex-col gap-8">
-            <div className="enroll-wrapper w-[600px] flex flex-col gap-8">
+            <div className="enrol-wrapper w-[600px] flex flex-col gap-8">
                 <div className="flex flex-col gap-1">
-                    <span className="text-4xl font-bold">Course Enrollment</span>
+                    <span className="text-4xl font-bold">Course Enrolment</span>
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem>
