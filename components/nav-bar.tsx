@@ -63,8 +63,8 @@ function Navbar() {
                   <ListItem href="/" title="Virtual Tour">
                     Get placed into a random location in the school and explore.
                   </ListItem>
-                  <ListItem href="#" title="something">
-                    something
+                  <ListItem href="/courses" title="Courses">
+                    Get information on the courses at the school.
                   </ListItem>
                 </ul>
               </NavigationMenuContent>
