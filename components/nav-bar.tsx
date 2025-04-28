@@ -69,6 +69,13 @@ function Navbar() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/login" legacyBehavior passHref>
+                <NavigationMenuLink className={"bg-transparent"}>
+                <span className="font-medium">Login</span>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

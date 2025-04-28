@@ -1,7 +1,7 @@
 "use client"
  
 import * as React from "react"
-import { Book, BoxIcon, Camera, Contact, DollarSign, FileUser, HomeIcon, Info, MapIcon, MenuIcon, Minus, Package, Plus, TreePine } from "lucide-react"
+import { Book, BoxIcon, Camera, Contact, DollarSign, FileUser, HomeIcon, Info, LogIn, MapIcon, MenuIcon, Minus, Package, Plus, TreePine } from "lucide-react"
  
 import { Button } from "@/components/ui/button"
 import {
@@ -61,6 +61,14 @@ function Burger() {
                 <Link href='/' className="font-[500]">
                   <TreePine className="opacity-50 items-center flex justify-center" size={16} />
                   Virtual Tour
+                </Link>
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
+                <Link href='/login' className="font-[500]">
+                  <LogIn className="opacity-50 items-center flex justify-center" size={16} />
+                  Login
                 </Link>
               </Button>
             </DrawerClose>
