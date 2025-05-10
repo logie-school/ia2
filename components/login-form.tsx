@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Link from "next/link"
 
 export function LoginForm({
   className,
@@ -18,7 +19,7 @@ export function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" type="email" placeholder="m@example.com" required tabIndex={1} />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -26,11 +27,12 @@ export function LoginForm({
             <a
               href="#"
               className="ml-auto text-sm underline-offset-4 hover:underline"
+              tabIndex={3}
             >
               Forgot your password?
             </a>
           </div>
-          <Input id="password" type="password" required />
+          <Input id="password" type="password" required tabIndex={2} />
         </div>
         <Button type="submit" className="w-full">
           Login
@@ -40,14 +42,21 @@ export function LoginForm({
             Or continue with
           </span>
         </div>
-        <Button variant="outline" className="w-full">
-          Admin Login
-        </Button>
+        <Link href={'/student-login'}>
+          <Button variant="outline" className="w-full">
+            Student ID
+          </Button>
+        </Link>
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         <a href="#" className="underline underline-offset-4">
           Sign up
+        </a>
+      </div>
+      <div className="text-center text-sm opacity-40 absolute bottom-2 left-2">
+        <a href="#">
+          Admin login
         </a>
       </div>
     </form>

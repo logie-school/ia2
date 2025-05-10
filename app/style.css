@@ -2,7 +2,7 @@
 
 
 /* change style depending on screen size */
-@media (max-width: 750px) {
+@media (max-width: 900px) {
     .hero-content {
         width: 90% !important;
         padding: 0;
@@ -23,6 +23,8 @@
     }
 
 }
+
+
 
 /* .pricing-tier {
     width: 100%;

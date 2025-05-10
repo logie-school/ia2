@@ -1,0 +1,40 @@
+.footer-item {
+    position: relative;
+}
+
+.footer-item p {
+    padding-left: 0px;
+    transition: 0.3s cubic-bezier(.17,.67,.2,1);
+    opacity: 0.5;
+}
+
+.footer-item:hover p {
+    padding-left: 16px;
+    opacity: 1;
+    transition: 0.3s cubic-bezier(.17,.67,.2,1);
+}
+
+.footer-item:active p {
+    opacity: 0.6;
+    transform: scaleY(0.9);
+    transition: 0s;
+}
+
+.footer-item:active svg {
+    left: 4px !important;
+    transition: 0s !important;
+    rotate: 0deg;
+}
+
+.footer-item svg {
+    left: 20px;
+    transition: 0.3s cubic-bezier(.17,.67,.2,1);
+    opacity: 0;
+}
+
+.footer-item:hover svg {
+    opacity: 0.3;
+    left: 0px;
+    transition: 0.3s cubic-bezier(.17,.67,.2,1);
+    rotate: 0deg;
+}

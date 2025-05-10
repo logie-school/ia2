@@ -24,6 +24,7 @@ import { motion } from "framer-motion"
 import './pano.css'
 import Loader from "@/components/loader"
 import { InfoSideBar } from "@/components/info-sidebar";
+import { Navbar } from "@/components/nav-bar";
 
 function Panorama({ onLoad }: { onLoad: () => void }) {
   const texture = useLoader(TextureLoader, "/360_2.jpg");
@@ -55,6 +56,7 @@ export default function PanoramaScene() {
   return (
     <div className="w-[100svw] h-[100svh] absolute top-0 right-0 box-border overflow-hidden">
       <Loader/>
+      <Navbar bgColor="#fff" topmost/>
       <InfoSideBar />
       <div className="w-screen h-screen absolute top-0">
         <Canvas camera={{ position: [0, 0, 1], fov: 75 }}>

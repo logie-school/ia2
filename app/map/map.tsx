@@ -2,7 +2,13 @@
 
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { useState, useRef, useEffect } from 'react';
-import { Book, BookOpenTextIcon, VolleyballIcon } from 'lucide-react';
+import { Book, BookOpenTextIcon, VolleyballIcon, ArrowLeft, HomeIcon, CircleHelp } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   Select,
   SelectContent,
@@ -28,6 +34,8 @@ import {
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { InfoSideBar } from '@/components/info-sidebar';
+import Link from 'next/link';
+import { Navbar } from '@/components/nav-bar';
 
 const containerStyle = {
   width: '100%',
@@ -80,6 +88,8 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
     return (localStorage.getItem('mapType') as 'roadmap' | 'satellite') || 'satellite';
   });
   const mapRef = useRef<google.maps.Map | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false); // State to track sheet open status
+  let [activeNode, setActiveNode] = useState<string | null>(null); // State to track active node
 
   useEffect(() => {
     // Save the map type to localStorage whenever it changes
@@ -178,10 +188,64 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
     <div className='overflow-hidden'>
 
     <InfoSideBar />
+    <Navbar bgColor='#fff' hidden={isSheetOpen} />
 
     <div className='absolute top-0 overflow-hidden' style={{ width: '100svw', height: '100svh' }}>
 
-      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 49 }}>
+      <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 49, transition: "1s cubic-bezier(.7,0,.24,.99)" }} className={`flex gap-2 flex-row mt-[89px] ${isSheetOpen ? "!mt-0" : ""}`} >
+        <Sheet onOpenChange={(open) => setIsSheetOpen(open)}>
+          <SheetTrigger asChild>
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant={'outline'}>
+                      <CircleHelp />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>Help</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </SheetTrigger>
+          <SheetContent className="rounded-2xl">
+            <SheetHeader>
+              <SheetTitle className="text-2xl font-bold">Map Help</SheetTitle>
+              <SheetDescription>
+                Learn and understand how to use the map.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 p-4">
+              <div className="items-center gap-4">
+                <Label className="text-right text-lg">How do I navigate the map?</Label>
+                <span className="opacity-50 text-sm">
+                  Click and drag to move the view and scroll to zoom in and out.
+                </span>
+              </div>
+              <div className="items-center gap-4">
+                <Label className="text-right text-lg">Whare are these circles?</Label>
+                <span className="opacity-50 text-sm">
+                  The circles are clickable nodes which have different uses, a camera
+                  icon is a 360° image, a letter indicates what block and all of the
+                  other nodes are custom nodes, hover on the nodes for more information.
+                </span>
+              </div>
+              <div className="items-center gap-4">
+                <Label className="text-right text-lg">Whare is the map view dropdown?</Label>
+                <span className="opacity-50 text-sm">
+                  The map view dropdown is located in the top left corner of the map, it
+                  allows you to switch between the map and satellite view.
+                </span>
+              </div>
+            </div>
+            <SheetFooter>
+              <SheetClose asChild></SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+
         <Select
           value={mapType}
           onValueChange={(value) => setMapType(value as 'roadmap' | 'satellite')}
@@ -197,37 +261,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
       </div>
 
       <div style={{ position: 'absolute', bottom: '20px', left: '20px', zIndex: 49 }}>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button className='bg-primary/80 backdrop-blur-sm'>Need help?</Button>
-          </SheetTrigger>
-          <SheetContent className='rounded-2xl'>
-            <SheetHeader>
-              <SheetTitle className='text-2xl font-bold'>Map Help</SheetTitle>
-              <SheetDescription>
-                Learn and understand how to use the map.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="grid gap-4 p-4">
-              <div className="items-center gap-4">
-                <Label className="text-right text-lg">
-                  How do I navigate the map?
-                </Label>
-                <span className='opacity-50 text-sm'>Click and drag to move the view and scroll to zoom in and out.</span>
-              </div>
-              <div className="items-center gap-4">
-                <Label className="text-right text-lg">
-                  Whare are these circles?
-                </Label>
-                <span className='opacity-50 text-sm'>The circles are clickable nodes which have different uses, a camera icon is a 360° image, a letter indicates what block and all of the other nodes are custom nodes, hover on the nodes for more information.</span>
-              </div>
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+        
       </div>
       <GoogleMap
         mapContainerStyle={containerStyle}

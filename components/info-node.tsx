@@ -1,3 +1,9 @@
+// TODO: rework the infonode to instead have its
+//       own nested sidebar (use the shadcn sheet)
+
+"use client"
+
+import { useState } from "react";
 import { Info } from "lucide-react";
 import { OverlayView } from "@react-google-maps/api";
 import {
@@ -13,6 +19,7 @@ interface InfoNodeProps {
   title: string;
   description: string;
   type: string;
+  onclick?: () => void;
 }
 
 export function InfoNode({
@@ -21,7 +28,9 @@ export function InfoNode({
   title,
   description,
   type,
+  onclick,
 }: InfoNodeProps) {
+
   return (
     <OverlayView
       position={position}
@@ -32,19 +41,6 @@ export function InfoNode({
           <div className="info-node-wrapper" draggable="false">
             <div
               className="info-node"
-              onClick={() => {
-                const sidebar = document.getElementById("sidebar");
-                if (sidebar) {
-                  if (sidebar.classList.contains("sidebar-hidden")) {
-                    sidebar.classList.remove("sidebar-hidden");
-                    sidebar.classList.add("sidebar-visible");
-                  }
-                  else {
-                    sidebar.classList.remove("sidebar-visible");
-                    sidebar.classList.add("sidebar-hidden");
-                  }
-                }
-              }}
             >
               <span className="text-lg text-white font-medium">{nodeLetter}</span>
             </div>

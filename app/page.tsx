@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button"
 import { BookUser, Clipboard, Sparkle, UserSearch, ArrowRight, LogIn } from "lucide-react";
 import './style.css'
 import { Navbar } from "@/components/nav-bar"
+import { Footer } from "@/components/footer"
 
 
 export default function Home() {
     return (
         <main>
-            <Navbar/>
-            <div className="flex items-center justify-center h-screen hero load-anim" style={{paddingTop: '61px'}} id="hero">
+            <Navbar bgColor="#fff"/>
+            <div className="flex items-center justify-center h-screen hero load-anim" style={{paddingTop: '89px'}} id="hero">
                 <div className="w-[40%] text-left p-10 flex flex-col justify-center gap-4 hero-content">
                 <div className="flex justify-center flex-col">
-                    <motion.div className="rounded-full flex items-center gap-2 bg-black/5 border border-black/30 w-fit mb-6 select-none" style={{padding: '10px 15px'}} initial={{ opacity: 0, transform: 'translateX(-10px)' }} animate={{ opacity: 1, transform: 'translateX(0px)' }} transition={{ duration: 1, ease: [.7,-0.63,.24,.99], delay: 0.5 }}>
+                    <motion.div className="rounded-full flex items-center gap-2 bg-black/5 border-black/30 w-fit mb-6 select-none" style={{padding: '10px 15px'}} initial={{ opacity: 0, transform: 'translateX(-10px)' }} animate={{ opacity: 1, transform: 'translateX(0px)' }} transition={{ duration: 1, ease: [.7,-0.63,.24,.99], delay: 0.5 }}>
                     <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [.7,0,.24,.99], delay: 1.2 }}>
                         <LogIn />
                     </motion.div>
@@ -44,6 +45,7 @@ export default function Home() {
                 </div>
                 </div>
             </div>
+            <Footer/>
         </main>
     )
 }
