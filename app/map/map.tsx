@@ -273,7 +273,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
         options={mapOptions} // Set min/max zoom levels and movement restriction
         onIdle={handleIdle} // Pass the handler here
       >
-        <PanoNode position={{ lat: -26.4095080970424, lng: 153.09906042235346 }} href='/' />
+        <PanoNode position={{ lat: -26.4095080970424, lng: 153.09906042235346 }} href='/pano' />
 
         {/* i need to put this data in a database later on instead of using the website. */}
         <InfoNode position={{ lat: -26.409631004423808, lng: 153.09882796891992 }} nodeLetter='I' title='I Block' description='Junior classrooms and senior exam block, newest block.' type='School classrooms' />
