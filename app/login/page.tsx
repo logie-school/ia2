@@ -21,6 +21,7 @@ export default function LoginPage() {
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
+      <a href="/admin-login" className="bottom-1 left-2 absolute opacity-20 text-xs">Admin Login</a>
     </div>
   )
 }

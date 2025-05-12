@@ -3,7 +3,7 @@ CREATE TABLE "staff" (
     "staff_email" TEXT NOT NULL PRIMARY KEY,
     "user_id" TEXT NOT NULL,
     "fn" TEXT NOT NULL,
-    "mn" TEXT NOT NULL,
+    "mn" TEXT,
     "sn" TEXT NOT NULL,
     "role_id" INTEGER NOT NULL,
     CONSTRAINT "staff_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,

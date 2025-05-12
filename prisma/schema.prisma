@@ -11,7 +11,7 @@ model staff {
   staff_email String @id
   user_id     String
   fn          String
-  mn          String
+  mn          String?
   sn          String
   role_id     Int
   role        role   @relation(fields: [role_id], references: [id])

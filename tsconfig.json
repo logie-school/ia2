@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "ia2_out/types/**/*.ts"
+    "ia2_out/types/**/*.ts",
+    "prisma/**/*.ts"
   ],
   "exclude": [
     "node_modules"
