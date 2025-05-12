@@ -25,9 +25,10 @@ export async function POST(req: Request) {
       );
     }
 
+    // Fetch the latest user data from the database
     const user = await prisma.users.findUnique({
       where: { user_id: decoded.userId },
-      select: { role_id: true },
+      select: { user_id: true, user_email: true, role_id: true },
     });
 
     if (!user) {
@@ -37,9 +38,19 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ role_id: user.role_id }, { status: 200 });
+    // Generate a new token with the updated role
+    const newToken = jwt.sign(
+      { userId: user.user_id, email: user.user_email, role: user.role_id },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    return NextResponse.json(
+      { message: "Token refreshed successfully.", token: newToken },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Error verifying token:", error);
+    console.error("Error refreshing token:", error);
     return NextResponse.json(
       { message: "Internal server error." },
       { status: 500 }

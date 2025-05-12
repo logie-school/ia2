@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Check, X } from "lucide-react";
+import { useRouter } from "next/navigation"; // Updated import
 
 export function RegisterForm({
   className,
@@ -15,7 +16,12 @@ export function RegisterForm({
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fn, setFn] = useState(""); // First name
+  const [mn, setMn] = useState(""); // Middle name (optional)
+  const [sn, setSn] = useState(""); // Surname
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter(); // Use the useRouter hook
 
   const passwordRequirements = {
     minLength: password.length >= 8,
@@ -47,7 +53,7 @@ export function RegisterForm({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, fn, mn, sn }),
       });
 
       const result = await response.json();
@@ -57,6 +63,10 @@ export function RegisterForm({
         setEmail("");
         setConfirmEmail("");
         setPassword("");
+        setFn("");
+        setMn("");
+        setSn("");
+        router.push("/login");
       } else {
         toast.error(result.message || "Something went wrong.");
       }
@@ -76,11 +86,43 @@ export function RegisterForm({
             <div className="flex flex-col items-start gap-2 text-center">
               <h1 className="text-2xl font-bold">Create an account</h1>
               <p className="text-muted-foreground text-sm text-balance">
-                Enter your email below to create an account
+                Enter your details below to create an account
               </p>
             </div>
           </div>
 
+          <div className="grid gap-3">
+            <Label htmlFor="fn">First Name</Label>
+            <Input
+              id="fn"
+              type="text"
+              placeholder="First Name"
+              value={fn}
+              onChange={(e) => setFn(e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="mn">Middle Name (Optional)</Label>
+            <Input
+              id="mn"
+              type="text"
+              placeholder="Middle Name"
+              value={mn}
+              onChange={(e) => setMn(e.target.value)}
+            />
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="sn">Surname</Label>
+            <Input
+              id="sn"
+              type="text"
+              placeholder="Surname"
+              value={sn}
+              onChange={(e) => setSn(e.target.value)}
+              required
+            />
+          </div>
           <div className="grid gap-3">
             <Label htmlFor="email">Email</Label>
             <Input

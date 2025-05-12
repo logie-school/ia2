@@ -27,6 +27,11 @@
     }
 }
 
+.burger {
+  display: none;
+  visibility: hidden;
+}
+
 /* .nav {
     opacity: 0.5;
     top: -40px;

@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import './nav-bar.css'
-import { LogOut, User } from "lucide-react"
+import { LogOut, User, ShieldIcon, RotateCcw } from "lucide-react"
 
 interface NavbarProps {
   bgColor?: string
@@ -42,21 +42,41 @@ interface NavbarProps {
 function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
+  const [isAdmin , setIsAdmin] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
-      try {
-        const decoded = JSON.parse(atob(token.split(".")[1])) // Decode JWT payload
-        setUserEmail(decoded.email)
-        setIsLoggedIn(true)
-      } catch (error) {
-        console.error("Error decoding token:", error)
-        setIsLoggedIn(false)
+    const refreshUserToken = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await fetch("/api/refresh-token", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("token", result.token); // Update the token in localStorage
+            const decoded = JSON.parse(atob(result.token.split(".")[1])); // Decode the new token
+            setUserEmail(decoded.email);
+            setIsLoggedIn(true);
+            setIsAdmin(decoded.role <= 3);
+          } else {
+            console.error(result.message);
+          }
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+        }
       }
-    }
-  }, [])
+    };
+
+    refreshUserToken();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -143,7 +163,7 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
               {isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Avatar>
+                    <Avatar className="cursor-pointer">
                       <AvatarImage src="" alt="User Avatar" />
                       <AvatarFallback>
                         {userEmail?.[0]?.toUpperCase()}
@@ -154,6 +174,18 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
                     <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
+                      {isAdmin && (
+                        <DropdownMenuItem onClick={() => router.push("/admin")}>
+                          <ShieldIcon className="mr-2 h-4 w-4" />
+                          <span>Admin Page</span>
+                        </DropdownMenuItem>
+                      )}
+
+                      <DropdownMenuItem onClick={() => router.push("/reset-password")}>
+                        <RotateCcw className="mr-2 h-4 w-4" />
+                        <span>Reset Password</span>
+                      </DropdownMenuItem>
+
                       <DropdownMenuItem onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Logout</span>

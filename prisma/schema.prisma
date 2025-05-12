@@ -7,54 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model staff {
-  staff_email String @id
-  user_id     String
-  fn          String
-  mn          String?
-  sn          String
-  role_id     Int
-  role        role   @relation(fields: [role_id], references: [id])
-  user        users  @relation(fields: [user_id], references: [user_id])
-}
-
 model users {
-  user_id    String @id
-  user_email String @unique
-  created    DateTime
+  user_id    String  @id @default(uuid())
+  user_email String  @unique
+  created    DateTime @default(now())
+  fn         String
+  mn         String?
+  sn         String
+  role_id    Int
+  role       role    @relation(fields: [role_id], references: [id])
   auth       auth?
-  staff      staff[]
   enrol      enrol[]
 }
 
 model auth {
-  user_id      String @id @unique
+  user_id      String  @id
   pwd_hash     String
   pwd_salt     String
-  last_updated DateTime
-  refresh_token String? // Optional column for storing refresh tokens
-  token_expiry DateTime? // Optional column for token expiration
-  user         users @relation(fields: [user_id], references: [user_id])
+  last_updated DateTime @default(now())
+  user         users   @relation(fields: [user_id], references: [user_id])
 }
 
 model role {
-  id    Int    @id
-  name  String @unique
-  staff staff[]
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  users users[]
 }
 
 model courses {
-  course_id   String @id
+  course_id   String  @id @default(uuid())
   course_name String
   course_desc String
   enrol       enrol[]
 }
 
 model enrol {
-  enrol_id    String @id
+  enrol_id    String  @id @default(uuid())
   user_id     String
   course_id   String
-  enrolled_at DateTime
+  enrolled_at DateTime @default(now())
   user        users   @relation(fields: [user_id], references: [user_id])
   course      courses @relation(fields: [course_id], references: [course_id])
 }

@@ -17,30 +17,19 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the user exists
     const user = await prisma.users.findUnique({
       where: { user_email: email },
       include: { auth: true },
     });
 
-    if (!user) {
-      // Return a specific message if the account doesn't exist
+    if (!user || user.role_id > 3) {
       return NextResponse.json(
-        { message: "Account does not exist." },
-        { status: 404 }
+        { message: "Insufficient permissions." },
+        { status: 403 }
       );
     }
 
-    // Check if the user has authentication data
-    if (!user.auth) {
-      return NextResponse.json(
-        { message: "Account does not have authentication data." },
-        { status: 401 }
-      );
-    }
-
-    // Validate the password
-    const isPasswordValid = await bcrypt.compare(password, user.auth.pwd_hash);
+    const isPasswordValid = await bcrypt.compare(password, user.auth?.pwd_hash || "");
 
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -49,30 +38,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if the user is a staff member with sufficient permissions
-    const staff = await prisma.staff.findFirst({
-      where: { user_id: user.user_id },
-    });
-
-    if (!staff || staff.role_id > 3) {
-      return NextResponse.json(
-        { message: "Insufficient permissions." },
-        { status: 403 }
-      );
-    }
-
-    // Generate a new token
     const token = jwt.sign(
-      { userId: user.user_id, email: user.user_email },
+      { userId: user.user_id, email: user.user_email, role: user.role_id },
       SECRET_KEY,
       { expiresIn: "1h" }
     );
-
-    // Update the database with the new token
-    await prisma.auth.update({
-      where: { user_id: user.user_id },
-      data: { refresh_token: token, token_expiry: new Date(Date.now() + 60 * 60 * 1000) },
-    });
 
     return NextResponse.json(
       { message: "Login successful.", token, email: user.user_email },
