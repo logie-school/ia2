@@ -32,6 +32,8 @@ model auth {
   pwd_hash     String
   pwd_salt     String
   last_updated DateTime
+  refresh_token String? // Optional column for storing refresh tokens
+  token_expiry DateTime? // Optional column for token expiration
   user         users @relation(fields: [user_id], references: [user_id])
 }
 

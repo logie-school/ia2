@@ -32,10 +32,12 @@ export function LoginForm({
       const result = await response.json();
 
       if (response.ok) {
+        localStorage.setItem("token", result.token);
         toast.success("Login successful!");
-        // Redirect or perform further actions here
+        setEmail("");
+        setPassword("");
       } else {
-        toast.error(result.message || "Invalid email or password.");
+        toast.error(result.message || "An error occurred.");
       }
     } catch (error) {
       toast.error("An error occurred. Please try again.");
@@ -73,11 +75,11 @@ export function LoginForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
             <a
-              href="#"
+              href="/reset-password"
               className="ml-auto text-sm underline-offset-4 hover:underline"
               tabIndex={3}
             >
-              Forgot your password?
+              Reset password
             </a>
           </div>
           <Input

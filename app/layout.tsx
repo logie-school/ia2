@@ -1,37 +1,43 @@
-import type { Metadata } from "next";
-// import { Poppins } from "next/font/google";
+"use client";
+
+import { useEffect } from "react";
+import { toast } from "sonner";
+import jwt from "jsonwebtoken";
 import "./globals.css";
-import { ThemeProvider as NextThemesProvider, ThemeProvider } from "next-themes"
-// import { Navbar } from "@/components/nav-bar";
-import { Toaster } from "@/components/ui/sonner"
-// import { Footer } from "@/components/footer";
-
-
-
-export const metadata: Metadata = {
-  title: "IA2",
-  description:
-    "Internal Assignment",
-  openGraph: {
-    title: "IA2",
-    description:
-      "Internal Assignment",
-    url: "https://ia2.logie.lol",
-    type: "website",
-    images: [
-      {
-        url: "#",
-        alt: "IA2",
-      },
-    ],
-  },
-};
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decoded = jwt.decode(token) as { email?: string } | null;
+
+        // Check if the decoded token has the required structure
+        if (!decoded || !decoded.email) {
+          console.warn("Invalid token structure.");
+          toast.error("Invalid or tampered token. Please log in again.");
+          localStorage.removeItem("token");
+          return;
+        }
+
+        // If valid, show a success toast
+        console.log(`Welcome back, ${decoded.email}!`);
+      } catch (error) {
+        // Catch any decoding errors
+        console.warn("Token decoding error:", error);
+        toast.error("Invalid or tampered token. Please log in again.");
+        localStorage.removeItem("token");
+      }
+    }
+  }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased vsc-initialized">
@@ -41,7 +47,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Toaster position="bottom-center" />
+          <Toaster richColors position="bottom-center" />
           {children}
         </ThemeProvider>
       </body>

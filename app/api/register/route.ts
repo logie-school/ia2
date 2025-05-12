@@ -12,6 +12,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Email and password are required." }, { status: 400 });
     }
 
+    // Validate password requirements
+    const passwordRequirements = {
+      minLength: password.length >= 8,
+      hasUppercase: /[A-Z]/.test(password),
+      hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      hasNumber: /\d/.test(password),
+    };
+
+    if (!Object.values(passwordRequirements).every(Boolean)) {
+      return NextResponse.json(
+        { message: "Password does not meet the requirements." },
+        { status: 400 }
+      );
+    }
+
     // Check if the user already exists
     const existingUser = await prisma.users.findUnique({
       where: { user_email: email },
