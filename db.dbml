@@ -1,0 +1,40 @@
+Project main {
+  database_type: "MySQL"
+}
+
+Table users {
+  user_id     string [pk, not null]
+  user_email  string [not null, unique]
+  created     date   [not null]
+  fn          string [not null]
+  mn          string
+  sn          string [not null]
+  role_id     int    [not null, ref: > role.id]
+}
+
+Table auth {
+  user_id       string [pk, not null, unique, ref: > users.user_id]
+  pwd_hash      string [not null]
+  pwd_salt      string [not null]
+  last_updated  date   [not null]
+}
+
+Table role {
+  id     int    [pk, not null]
+  name   string [not null, unique]
+
+  Note: "1 = principle, 2 = admin, 3 = hod, 4 = teacher, 5 = user"
+}
+
+Table courses {
+  course_id     string [pk, not null]
+  course_name   string [not null]
+  course_desc   string [not null]
+}
+
+Table enrol {
+  enrol_id     string [pk, not null]
+  user_id      string [not null, ref: > users.user_id]
+  course_id    string [not null, ref: > courses.course_id]
+  enrolled_at  date   [not null]
+}
