@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LockIcon } from "lucide-react";
 
 export function AdminLoginForm({
   className,
@@ -49,6 +50,9 @@ export function AdminLoginForm({
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-md">
+                <LockIcon className="size-6" />
+              </div>
             <h1 className="text-xl font-bold">SBSHS Admin</h1>
           </div>
           <div className="flex flex-col gap-6">
