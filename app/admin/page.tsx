@@ -4,6 +4,8 @@ import { Navbar } from "@/components/nav-bar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/loader";
+import { BanIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -49,11 +51,23 @@ export default function AdminPage() {
 
   if (!hasPermission) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-muted p-6 md:p-10">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-muted pt-[89px]">
         <Navbar bgColor="#fff" />
-        <div className="flex w-full max-w-sm flex-col gap-6 pt-[89px]">
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p>You do not have permission to view this page.</p>
+        <div className="flex w-full max-w-sm flex-col items-center gap-6 rounded-xl bg-red-400/20 p-6 border border-red-400 shadow-md">
+          <BanIcon className="size-8 text-red-700" />
+          <div className="flex flex-col items-center gap-1">
+            <h1 className="text-2xl font-bold text-red-700">Access Denied</h1>
+            <p className="text-red-700">You do not have permission to view this page.</p>
+          </div>
+          <Button
+          variant="outline"
+            className="w-full max-w-xs"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            Go to Home
+          </Button>
         </div>
       </div>
     );

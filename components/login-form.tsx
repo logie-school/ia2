@@ -36,6 +36,7 @@ export function LoginForm({
         toast.success("Login successful!");
         setEmail("");
         setPassword("");
+        location.reload();
       } else {
         toast.error(result.message || "An error occurred.");
       }

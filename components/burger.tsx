@@ -1,26 +1,52 @@
 "use client"
- 
+
 import * as React from "react"
-import { Book, BookMarked, BoxIcon, Camera, Contact, DollarSign, FileUser, HomeIcon, Info, LogIn, MapIcon, MenuIcon, Minus, Package, Plus, TreePine } from "lucide-react"
- 
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { LogOut, HomeIcon, MapIcon, FileUser, BookMarked, TreePine, LogIn, MenuIcon } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import Link from "next/link"
 
-
 function Burger() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split(".")[1])) // Decode JWT payload
+        setUserEmail(decoded.email)
+        setIsLoggedIn(true)
+      } catch (error) {
+        console.error("Error decoding token:", error)
+        setIsLoggedIn(false)
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsLoggedIn(false)
+    setUserEmail(null)
+    router.push("/")
+    location.reload()
+  }
+
   return (
     <Drawer>
-      <DrawerTrigger asChild className="burger" style={{ display: "none"}}>
+      <DrawerTrigger asChild className="burger">
         <Button variant="ghost">
           <MenuIcon />
         </Button>
@@ -28,13 +54,13 @@ function Burger() {
       <DrawerContent>
         <div className="mx-auto w-full">
           <DrawerHeader hidden>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+            <DrawerTitle>Menu</DrawerTitle>
+            <DrawerDescription>Navigate through the site.</DrawerDescription>
           </DrawerHeader>
           <div className="flex flex-col gap-4 p-4 w-full">
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/' className="font-[500]">
+                <Link href="/" className="font-[500]">
                   <HomeIcon className="opacity-50 items-center flex justify-center" size={16} />
                   Home
                 </Link>
@@ -42,7 +68,7 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/map' className="font-[500]">
+                <Link href="/map" className="font-[500]">
                   <MapIcon className="opacity-50 items-center flex justify-center" size={16} />
                   Site Map
                 </Link>
@@ -50,7 +76,7 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/enrol' className="font-[500]">
+                <Link href="/enrol" className="font-[500]">
                   <FileUser className="opacity-50 items-center flex justify-center" size={16} />
                   Course Enrollment
                 </Link>
@@ -58,7 +84,7 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/enrol' className="font-[500]">
+                <Link href="/courses" className="font-[500]">
                   <BookMarked className="opacity-50 items-center flex justify-center" size={16} />
                   Courses
                 </Link>
@@ -66,20 +92,33 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/pano' className="font-[500]">
+                <Link href="/pano" className="font-[500]">
                   <TreePine className="opacity-50 items-center flex justify-center" size={16} />
                   Virtual Tour
                 </Link>
               </Button>
             </DrawerClose>
-            <DrawerClose asChild>
-              <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
-                <Link href='/login' className="font-[500]">
-                  <LogIn className="opacity-50 items-center flex justify-center" size={16} />
-                  Login
-                </Link>
-              </Button>
-            </DrawerClose>
+            {isLoggedIn ? (
+              <DrawerClose asChild>
+                <Button
+                  className="flex flex-row gap-2 items-center justify-start burger-item"
+                  variant={"ghost"}
+                  onClick={handleLogout}
+                >
+                  <LogOut className="opacity-50 items-center flex justify-center" size={16} />
+                  Logout
+                </Button>
+              </DrawerClose>
+            ) : (
+              <DrawerClose asChild>
+                <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant={"ghost"} asChild>
+                  <Link href="/login" className="font-[500]">
+                    <LogIn className="opacity-50 items-center flex justify-center" size={16} />
+                    Login
+                  </Link>
+                </Button>
+              </DrawerClose>
+            )}
           </div>
         </div>
       </DrawerContent>

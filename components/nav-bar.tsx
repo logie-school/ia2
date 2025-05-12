@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -11,34 +13,88 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
 import { Burger } from "@/components/burger"
-import './nav-bar.css'
 import { motion } from "framer-motion"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import './nav-bar.css'
+import { LogOut, User } from "lucide-react"
 
 interface NavbarProps {
-  bgColor?: string;
-  hidden?: boolean;
-  topmost?: boolean;
+  bgColor?: string
+  hidden?: boolean
+  topmost?: boolean
 }
 
-function Navbar({  bgColor, hidden, topmost}: NavbarProps) {
+function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded = JSON.parse(atob(token.split(".")[1])) // Decode JWT payload
+        setUserEmail(decoded.email)
+        setIsLoggedIn(true)
+      } catch (error) {
+        console.error("Error decoding token:", error)
+        setIsLoggedIn(false)
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsLoggedIn(false)
+    setUserEmail(null)
+    router.push("/")
+    location.reload()
+  }
+
   return (
-    <motion.div 
-      className={`z-[999] w-screen mx-auto border-b-1 shadow-xl p-3 justify-center flex-row flex items-center fixed top-0 left-0 bg-background/50 backdrop-blur-sm nav ${hidden || ""}  ${topmost ? "z-[2147483646]" : "z-[999]"}`} 
-      suppressHydrationWarning 
-      initial={{ opacity: 0, y: -60 }} 
-      animate={hidden ? { opacity: 0, y: -60, pointerEvents: "none" } : { opacity: 1, y: 0, pointerEvents: "all" }} 
-      transition={{ duration: 1, ease: [.7,0,.24,.99], delay: 0 }} 
-      style={{backgroundColor: bgColor}}
-      >
-      <div className="w-[60%] flex items-center justify-between nav-bar">
-        <a className="nav-logo font-bold text-xl flex flex-row items-center gap-4" href="/">
-          <img src="/sbshs.webp" alt="logo" className="nav-img aspect-square h-[64px]" style={{ filter: "drop-shadow(0 0 10px #0005)" }} />
-          <span className="text-2xl font-bold text-primary nav-title">Sunshine Beach State High School</span>
+    <motion.div
+      className={`z-[999] w-screen mx-auto border-b-1 shadow-xl p-3 justify-center flex-row flex items-center fixed top-0 left-0 bg-background/50 backdrop-blur-sm nav ${hidden || ""}  ${
+        topmost ? "z-[2147483646]" : "z-[999]"
+      }`}
+      suppressHydrationWarning
+      initial={{ opacity: 0, y: -60 }}
+      animate={
+        hidden
+          ? { opacity: 0, y: -60, pointerEvents: "none" }
+          : { opacity: 1, y: 0, pointerEvents: "all" }
+      }
+      transition={{ duration: 1, ease: [0.7, 0, 0.24, 0.99], delay: 0 }}
+      style={{ backgroundColor: bgColor }}
+    >
+      <div className="w-[80%] flex items-center justify-between nav-bar">
+        <a
+          className="nav-logo font-bold text-xl flex flex-row items-center gap-4"
+          href="/"
+        >
+          <img
+            src="/sbshs.webp"
+            alt="logo"
+            className="nav-img aspect-square h-[64px]"
+            style={{ filter: "drop-shadow(0 0 10px #0005)" }}
+          />
+          <span className="text-2xl font-bold text-primary nav-title">
+            Sunshine Beach State High School
+          </span>
         </a>
         <Burger />
         <NavigationMenu className="nav-buttons">
@@ -46,12 +102,14 @@ function Navbar({  bgColor, hidden, topmost}: NavbarProps) {
             <NavigationMenuItem>
               <Link href="/#home" legacyBehavior passHref>
                 <NavigationMenuLink className={"bg-transparent"}>
-                <span className="font-medium">Home</span>
+                  <span className="font-medium">Home</span>
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent">Explore</NavigationMenuTrigger>
+              <NavigationMenuTrigger className="bg-transparent">
+                Explore
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-3 md:w-[300px] lg:w-[600px] lg:grid-cols-[.75fr_1fr]">
                   <li className="row-span-3">
@@ -60,7 +118,6 @@ function Navbar({  bgColor, hidden, topmost}: NavbarProps) {
                         className="flex h-full w-full select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md justify-center"
                         href="/map"
                       >
-
                         <div className="mb-2 mt-4 text-lg font-medium">
                           Site Map
                         </div>
@@ -83,11 +140,34 @@ function Navbar({  bgColor, hidden, topmost}: NavbarProps) {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/login" legacyBehavior passHref>
-                <NavigationMenuLink className={"bg-transparent"}>
-                <span className="font-medium">Login</span>
-                </NavigationMenuLink>
-              </Link>
+              {isLoggedIn ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar>
+                      <AvatarImage src="" alt="User Avatar" />
+                      <AvatarFallback>
+                        {userEmail?.[0]?.toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 z-[2147483647]">
+                    <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Logout</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link href="/login" legacyBehavior passHref>
+                  <NavigationMenuLink className={"bg-transparent"}>
+                    <span className="font-medium">Login</span>
+                  </NavigationMenuLink>
+                </Link>
+              )}
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

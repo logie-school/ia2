@@ -37,8 +37,8 @@ export function AdminLoginForm({
       if (response.ok) {
         localStorage.setItem("token", result.token);
         toast.success("Login successful!");
-        // Redirect to the admin page
-        router.push("/admin"); // Use router.push instead of Router.push
+        router.push("/admin");
+        location.reload();
       } else {
         toast.error(result.message || "An error occurred.");
       }
