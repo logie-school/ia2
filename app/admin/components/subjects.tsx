@@ -344,14 +344,14 @@ export default function SubjectsPage() {
                             toast.success(`Copied ${subject.subject_id} to clipboard`);
                           }}
                         >
-                          <IdCard className="mr-2 h-4 w-4" />
+                          <IdCard />
                           Copy Subject ID
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="group hover:!bg-red-500/10 hover:!text-red-500"
                           onClick={() => setDeleteDialogOpen(subject.subject_id)}
                         >
-                          <Trash2 className="mr-2 h-4 w-4 group-hover:text-red-500 transition-colors text-muted-foreground" />
+                          <Trash2 className="group-hover:text-red-500 transition-colors text-muted-foreground" />
                           Delete Subject
                         </DropdownMenuItem>
                       </DropdownMenuContent>

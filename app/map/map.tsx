@@ -225,7 +225,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
                 </span>
               </div>
               <div className="items-center gap-4">
-                <Label className="text-right text-lg">Whare are these circles?</Label>
+                <Label className="text-right text-lg">What are these circles?</Label>
                 <span className="opacity-50 text-sm">
                   The circles are clickable nodes which have different uses, a camera
                   icon is a 360° image, a letter indicates what block and all of the
@@ -233,7 +233,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
                 </span>
               </div>
               <div className="items-center gap-4">
-                <Label className="text-right text-lg">Whare is the map view dropdown?</Label>
+                <Label className="text-right text-lg">What is the map view dropdown?</Label>
                 <span className="opacity-50 text-sm">
                   The map view dropdown is located in the top left corner of the map, it
                   allows you to switch between the map and satellite view.

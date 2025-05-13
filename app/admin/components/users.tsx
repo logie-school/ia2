@@ -31,7 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { IdCard, Send, MoreHorizontal, PlusIcon, Plus, Trash2, Eye, EyeOff } from "lucide-react";
+import { IdCard, Send, MoreHorizontal, PlusIcon, Plus, Trash2, Eye, EyeOff, UserRoundPen } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -227,7 +227,7 @@ export default function UsersPage() {
                   toast.info(`Copied ${user.fn}'s user ID to clipboard.`);
                 }}
               >
-                <IdCard className="mr-2 h-4 w-4" />
+                <IdCard />
                 Copy User ID
               </DropdownMenuItem>
               <a
@@ -235,10 +235,14 @@ export default function UsersPage() {
                 rel="noopener noreferrer"
               >
                 <DropdownMenuItem>
-                  <Send className="mr-2 h-4 w-4" />
+                  <Send />
                   Send Email
                 </DropdownMenuItem>
               </a>
+            <DropdownMenuItem>
+                <UserRoundPen />
+                Edit Role
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="group hover:!bg-red-500/10 hover:!text-red-500"
                 onClick={e => {
@@ -247,7 +251,7 @@ export default function UsersPage() {
                   setDeleteDialogOpen(true);
                 }}
               >
-                <Trash2 className="mr-2 h-4 w-4 group-hover:text-red-500 transition-colors text-muted-foreground" />
+                <Trash2 className="group-hover:text-red-500 transition-colors text-muted-foreground" />
                 Delete User
               </DropdownMenuItem>
               <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

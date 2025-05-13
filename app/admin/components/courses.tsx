@@ -474,7 +474,7 @@ export default function CoursesPage() {
                             toast.info(`Copied ID of ${course.course_name} to clipboard.`);
                           }}
                         >
-                          <IdCard className="mr-2 h-4 w-4" />
+                          <IdCard />
                           Copy Course ID
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -485,7 +485,7 @@ export default function CoursesPage() {
                             setDeleteDialogOpen(course.course_id);
                           }}
                         >
-                          <Trash2 className="mr-2 h-4 w-4 group-hover:text-red-500 transition-colors text-muted-foreground" />
+                          <Trash2 className="group-hover:text-red-500 transition-colors text-muted-foreground" />
                           Delete Course
                         </DropdownMenuItem>
                       </DropdownMenuContent>
