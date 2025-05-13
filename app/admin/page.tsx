@@ -16,6 +16,7 @@ import {
 import CoursesPage from "./components/courses";
 import SubjectsPage from "./components/subjects";
 import UsersPage from "./components/users";
+import EnrolmentsPage from "./components/enrolments";
 
 export default function AdminPage() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -99,6 +100,8 @@ export default function AdminPage() {
         return <CoursesPage />;
       case "subjects":
         return <SubjectsPage />;
+      case "enrolments":
+        return <EnrolmentsPage />;
       default:
         return <div>
           <h1 className="text-2xl font-bold">Welcome to the Admin Page</h1>

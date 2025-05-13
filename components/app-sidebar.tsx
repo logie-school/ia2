@@ -26,21 +26,19 @@ export function AppSidebar({ activePage, ...props }: AppSidebarProps) {
     { name: "Subjects", page: "subjects" },
     { name: "Courses", page: "courses" },
     { name: "Users", page: "users" },
+    { name: "Enrolments", page: "enrolments" },
   ];
 
   const handleNavigation = (page: string) => {
-    router.push(`?page=${page}`, undefined, { shallow: true }); // Update the query parameter without refreshing
+    router.push(`?page=${page}`, undefined);
   };
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="gap-2">
-        <div className="w-full text-center font-bold pt-2">Admin Page</div>
-      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="font-bold opacity-50 uppercase">
-            MAIN
+            Admin Page
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
