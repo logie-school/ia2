@@ -272,6 +272,23 @@ export default function UsersPage() {
         <div className="text-sm text-muted-foreground">
           Showing {table.getRowModel().rows.length} of {data.length} entries
         </div>
+        <div className="flex items-center gap-2">
+          <span>Rows per page:</span>
+          <Select
+            onValueChange={(value) => table.setPageSize(Number(value))}
+            value={table.getState().pagination.pageSize.toString()}
+          >
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Rows" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
