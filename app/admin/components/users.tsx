@@ -63,7 +63,6 @@ export default function UsersPage() {
     user_id: false, // Hide the User ID column by default
     mn: false, // Hide the Middle Name column by default
   });
-  const [rowSelection, setRowSelection] = React.useState({});
   const [searchType, setSearchType] = React.useState<string>("user_email");
   const [searchValue, setSearchValue] = React.useState<string>("");
 
@@ -225,7 +224,7 @@ export default function UsersPage() {
               <DropdownMenuItem
                 onClick={() => {
                   navigator.clipboard.writeText(user.user_id);
-                  toast.info(`${user.fn}'s User ID copied to clipboard`);
+                  toast.info(`Copied ${user.fn}'s user ID to clipboard.`);
                 }}
               >
                 <IdCard className="mr-2 h-4 w-4" />
@@ -311,12 +310,10 @@ export default function UsersPage() {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
     },
   });
 
@@ -371,7 +368,7 @@ export default function UsersPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 Visible Columns
-                <Eye className="ml-2" />
+                <Eye />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -545,23 +542,6 @@ export default function UsersPage() {
       <div className="flex items-center justify-between py-4">
         <div className="text-sm text-muted-foreground">
           Showing {table.getRowModel().rows.length} of {data.length} entries
-        </div>
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select
-            onValueChange={(value) => table.setPageSize(Number(value))}
-            value={table.getState().pagination.pageSize.toString()}
-          >
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Rows" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         <div className="space-x-2">
           <Button

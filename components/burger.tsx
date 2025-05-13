@@ -86,14 +86,6 @@ function Burger() {
             </DrawerClose>
             <DrawerClose asChild>
               <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant="ghost" asChild>
-                <Link href="/courses" className="font-[500]">
-                  <BookMarked className="opacity-50 items-center flex justify-center" size={16} />
-                  Courses
-                </Link>
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button className="flex flex-row gap-2 items-center justify-start burger-item" variant="ghost" asChild>
                 <Link href="/pano" className="font-[500]">
                   <TreePine className="opacity-50 items-center flex justify-center" size={16} />
                   Virtual Tour

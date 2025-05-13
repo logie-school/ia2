@@ -281,6 +281,7 @@ export default function MapComponent({ onIdle }: { onIdle?: () => void }) {
         <InfoNode position={{ lat: -26.40969740646617, lng: 153.09934078533985 }} nodeLetter='J' title='J Block' description='Mathematics block.' type='School classrooms' />
         <InfoNode position={{ lat: -26.40928450445418, lng: 153.09928638704162 }} nodeLetter='GS' title='GS Block' description='English and writing block.' type='School classrooms' />
         <InfoNode position={{ lat: -26.409674473435988, lng: 153.09982825007637 }} nodeLetter='C' title='C Block' description='Italian and support block.' type='School classrooms' />
+        <InfoNode position={{ lat: -26.409222174594248, lng: 153.1003212789107 }} nodeLetter='B' title='B Block' description='Science block.' type='School classrooms' href='/enrol?faculty=Science' />
 
         <CustomNode position={{ lat: -26.408705184759523, lng: 153.0989981543763 }} title='Backetball Courts' description='Two full size undercover courts.' type='Sports facility' bgColor='#c76300' fgColor='#fff'>
           <VolleyballIcon/>

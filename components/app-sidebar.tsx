@@ -24,9 +24,9 @@ export function AppSidebar({ activePage, ...props }: AppSidebarProps) {
 
   const navItems = [
     { name: "Subjects", page: "subjects" },
-    { name: "Courses", page: "courses" },
     { name: "Users", page: "users" },
-    { name: "Enrolments", page: "enrolments" },
+    { name: "Courses", page: "courses" },
+    { name: "Course Enrolments", page: "enrolments" },
   ];
 
   const handleNavigation = (page: string) => {

@@ -150,9 +150,6 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
                   <ListItem href="/enrol" title="Course Enrolment">
                     Enrol students into certain courses.
                   </ListItem>
-                  <ListItem href="/courses" title="Courses">
-                    Get information on the courses at the school.
-                  </ListItem>
                   <ListItem href="/pano" title="Virtual Tour">
                     Get placed into a random location in the school and explore.
                   </ListItem>

@@ -1,151 +1,98 @@
 "use client";
 
-import { Canvas, useLoader } from "@react-three/fiber";
-import { Sphere, Html, OrbitControls } from "@react-three/drei";
-import { TextureLoader } from "three";
-import { useState, useEffect } from "react";
-
-import { Plus, SendIcon, User, XIcon } from "lucide-react"
- 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Badge } from "@/components/ui/badge"
-import Link from 'next/link'
-import { motion } from "framer-motion"
-import Loader from "@/components/loader"
-import "@/components/nav-bar"
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/nav-bar";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-  } from "@/components/ui/breadcrumb"
-
-import './style.css'
+import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/footer";
+import { ArrowRight } from "lucide-react";
 
 export default function EnrolPage() {
+  const searchParams = useSearchParams();
+  const faculty = searchParams.get("faculty");
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const handlePageLoad = () => {
-          document.getElementById("loader")?.classList.add("opacity-0", "pointer-events-none");
-        };
-    
-        if (document.readyState === "complete") {
-          // If the page is already loaded
-          handlePageLoad();
-        } else {
-          // Wait for the page to load
-          window.addEventListener("load", handlePageLoad);
-          return () => window.removeEventListener("load", handlePageLoad); // Cleanup listener
-        }
-      }, []);
+  useEffect(() => {
+    if (faculty) {
+      setLoading(true);
+      fetch(`/api/courses-by-faculty?faculty=${encodeURIComponent(faculty)}`)
+        .then((res) => res.json())
+        .then((data) => setCourses(data))
+        .finally(() => setLoading(false));
+    }
+  }, [faculty]);
 
   return (
-    <div className="box-border bg-white">
-      <Loader />
-      <Navbar />
-      <div>
-        <div className="w-full mt-[89] p-16 absolute top-0 right-0 box-border overflow-hidden items-center justify-center flex flex-col gap-8">
-            <div className="enrol-wrapper w-[600px] flex flex-col gap-8">
-                <div className="flex flex-col gap-1">
-                    <span className="text-4xl font-bold">Course Enrolment</span>
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            <BreadcrumbItem>
-                                <BreadcrumbLink href="/courses">English General</BreadcrumbLink>
-                            </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                            <BreadcrumbItem>
-                                <BreadcrumbPage>ENG12</BreadcrumbPage>
-                            </BreadcrumbItem>
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </div>
-                <div className="flex flex-col gap-4 w-full items-center justify-between">
-                    <div className="w-full bg-[#D9D9D9] p-4 flex flex-row gap-4 rounded-lg items-center justify-between">
-                        <div className="flex flex-row items-center gap-2">
-                            <User/>
-                            <span className="font-medium">Name</span>
-                            <span className="font-light opacity-50">•</span>
-                            <span>Year 12</span>
-                        </div>
-                        <div className="flex flex-row gap-2 items-center justify-center">
-                            <span className="opacity-50">1029485752</span>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                    <div className="aspect-square w-6 items-center justify-center rounded-full flex flex-row hover:bg-[#000000]/10 cursor-pointer active:opacity-50">
-                                        <XIcon size={16}/>
-                                    </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                    <p>Remove</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </div>
-                    </div>
-
-                    <div className="w-full bg-[#D9D9D9] p-4 flex flex-row gap-4 rounded-lg items-center justify-between">
-                        <div className="flex flex-row items-center gap-2">
-                            <User/>
-                            <span className="font-medium">Name</span>
-                            <span className="font-light opacity-50">•</span>
-                            <span>Year 9</span>
-                        </div>
-                        <div className="flex flex-row gap-2 items-center justify-center">
-                            <span className="opacity-50">3958205593</span>
-                            <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                    <div className="aspect-square w-6 items-center justify-center rounded-full flex flex-row hover:bg-[#000000]/10 cursor-pointer active:opacity-50">
-                                        <XIcon size={16}/>
-                                    </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                    <p>Remove</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                        </div>
-                    </div>
-
-
-
-
-                    <div className="w-full p-4 flex flex-row gap-4 rounded-lg h-[56] items-center justify-between border-2 border-dashed hover:bg-accent cursor-pointer active:opacity-50 select-none">
-                        <div className="flex flex-row items-center gap-2">
-                            <Plus/>
-                            <span className="font-medium">Add a student</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="w-full flex flex-col gap-2 items-center justify-between">
-                    <Button className="w-full bg-[#01615A] hover:bg-[#007d74] active:opacity-50 active:duration-[0]" variant={"default"}>
-                        Submit
-                        <SendIcon/>
-                    </Button>
-                    <span className="text-sm opacity-50">
-                        By submitting you agree to the <Link href={'#'} className="hover:underline hover:decoration-solid active:opacity-50">Privacy Policy</Link> and <Link href={'#'} className="hover:underline hover:decoration-solid active:opacity-50">Terms</Link>.
-                    </span>
-                </div>
+    <>
+      <Navbar bgColor="#fff" />
+      <div className="enrol-wrapper p-6 flex flex-col items-center min-h-screen bg-background">
+        <div className="w-full max-w-[800px] mx-auto flex flex-col items-center  pt-[89px]">
+          <h1 className="text-2xl font-bold mb-4 text-center">Course Enrolment</h1>
+          {faculty && (
+            <div className="mb-4">
+              <span className="font-semibold">Faculty:</span> {faculty}
             </div>
+          )}
+          {loading && <div>Loading courses...</div>}
+          {!loading && faculty && courses.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <div className="text-muted-foreground">No courses found for "{faculty}", you can find one on the map by clicking on the nodes.</div>
+              <a href="/map">
+                <Button variant="outline">To Map<ArrowRight/></Button>
+              </a>
+            </div>
+          )}
+          {!loading && courses.length > 0 && (
+            <ul className="space-y-4 w-full">
+              {courses.map((course) => (
+                <li
+                  key={course.course_id}
+                  className="border rounded-xl p-4 bg-muted/50 shadow-sm flex flex-col gap-2"
+                >
+                  <div className="font-semibold text-lg">{course.course_name}</div>
+                  <div className="text-sm opacity-70">{course.course_desc}</div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant="outline"
+                        className="bg-blue-100 text-blue-800 border-blue-200 px-3 py-1 rounded-full font-medium"
+                      >
+                        Year: {course.year_level}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="bg-green-100 text-green-800 border-green-200 px-3 py-1 rounded-full font-medium"
+                      >
+                        Subject: {course.subject?.name}
+                      </Badge>
+                      {course.host_user && (
+                        <Badge
+                          variant="outline"
+                          className="bg-purple-100 text-purple-800 border-purple-200 px-3 py-1 rounded-full font-medium"
+                        >
+                          Teacher: {course.host_user.fn} {course.host_user.sn}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button variant="outline" className="mt-2">Enrol in {course.course_name}</Button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {!faculty && (
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <div className="text-muted-foreground">No faculty selected, you can find one on the map by clicking on the nodes.</div>
+              <a href="/map">
+                <Button variant="outline">To Map<ArrowRight/></Button>
+              </a>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+      <Footer/>
+    </>
   );
 }

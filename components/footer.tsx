@@ -42,7 +42,7 @@ export function Footer() {
           <div className="footer-column flex flex-col w-full min-w[200px]">
             <strong className="mb-2 pb-1 border-b-1 border-solid">Main</strong>
             <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0 }}>
-              <FooterItem name='Courses' href='/courses'></FooterItem>
+              <FooterItem name='Virtual Tour' href='/pano'></FooterItem>
             </motion.div>
             <motion.div initial={{ opacity: 0, x: 10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
               <FooterItem name='Enrol' href='/enrol'></FooterItem>
