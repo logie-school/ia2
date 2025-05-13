@@ -1,15 +1,27 @@
 "use client";
 
-import { Navbar } from "@/components/nav-bar";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Loader from "@/components/loader";
 import { BanIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppSidebar } from "@/components/app-sidebar";
+import { motion } from "framer-motion";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+
+// Import the components for each page
+import CoursesPage from "./components/courses";
+import SubjectsPage from "./components/subjects";
+import UsersPage from "./components/users";
 
 export default function AdminPage() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState<string | null>(""); // Track the current page
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -45,14 +57,19 @@ export default function AdminPage() {
     checkPermissions();
   }, []);
 
+  useEffect(() => {
+    // Update the current page whenever the query parameter changes
+    const page = searchParams.get("page");
+    setCurrentPage(page);
+  }, [searchParams]);
+
   if (hasPermission === null) {
-    return <Loader/>; // Show a loading state while checking permissions
+    return <Loader />; // Show a loading state while checking permissions
   }
 
   if (!hasPermission) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-muted pt-[89px]">
-        <Navbar bgColor="#fff" />
         <div className="flex w-full max-w-sm flex-col items-center gap-6 rounded-xl bg-red-400/20 p-6 border border-red-400 shadow-md">
           <BanIcon className="size-8 text-red-700" />
           <div className="flex flex-col items-center gap-1">
@@ -60,7 +77,7 @@ export default function AdminPage() {
             <p className="text-red-700">You do not have permission to view this page.</p>
           </div>
           <Button
-          variant="outline"
+            variant="outline"
             className="w-full max-w-xs"
             onClick={() => {
               router.push("/");
@@ -73,13 +90,41 @@ export default function AdminPage() {
     );
   }
 
+  // Render content based on the current page
+  const renderContent = () => {
+    switch (currentPage) {
+      case "users":
+        return <UsersPage />;
+      case "courses":
+        return <CoursesPage />;
+      case "subjects":
+        return <SubjectsPage />;
+      default:
+        return <div>
+          <h1 className="text-2xl font-bold">Welcome to the Admin Page</h1>
+          <p className="text-muted-foreground">Select a page from the sidebar to get started.</p>
+        </div>;
+    }
+  };
+
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <Navbar bgColor="#fff" />
-      <div className="flex w-full max-w-sm flex-col gap-6 pt-[89px]">
-        <h1 className="text-2xl font-bold">Admin Page</h1>
-        <p>Welcome to the admin page!</p>
-      </div>
+    <div className="flex mt-[89px]">
+
+      <motion.div
+        initial={{ opacity: 0, pointerEvents: "none" }}
+        animate={{ opacity: 1, pointerEvents: "all" }}
+        transition={{ duration: 1, ease: [0.7, 0, 0.24, 0.99], delay: 0.5 }}
+        className="w-full h-full"
+      >
+        <SidebarProvider>
+          <AppSidebar activePage={currentPage} />
+          <SidebarInset>
+            <div className="flex flex-1 flex-col gap-4 p-4">
+              {renderContent()}
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      </motion.div>
     </div>
   );
 }

@@ -8,24 +8,26 @@ datasource db {
 }
 
 model users {
-  user_id    String  @id @default(uuid())
-  user_email String  @unique
+  user_id    String   @id @default(uuid())
+  user_email String   @unique
   created    DateTime @default(now())
   fn         String
   mn         String?
   sn         String
   role_id    Int
-  role       role    @relation(fields: [role_id], references: [id])
+  role       role     @relation(fields: [role_id], references: [id])
   auth       auth?
   enrol      enrol[]
+  courses    courses[] @relation("hostedCourses")
+  subjects   subjects[] @relation("hodSubjects")
 }
 
 model auth {
-  user_id      String  @id
+  user_id      String   @id
   pwd_hash     String
   pwd_salt     String
   last_updated DateTime @default(now())
-  user         users   @relation(fields: [user_id], references: [user_id])
+  user         users    @relation(fields: [user_id], references: [user_id])
 }
 
 model role {
@@ -35,17 +37,35 @@ model role {
 }
 
 model courses {
-  course_id   String  @id @default(uuid())
-  course_name String
-  course_desc String
-  enrol       enrol[]
+  course_id     String   @id @default(uuid())
+  course_name   String
+  course_desc   String
+  host_user_id  String
+  year_level    Int
+  subject_id    String?
+  offering_date String?
+  location      String?
+  cost          Float?
+  prereq        String?
+  host_user     users    @relation("hostedCourses", fields: [host_user_id], references: [user_id])
+  subject       subjects? @relation(fields: [subject_id], references: [subject_id])
+  enrol         enrol[]
+}
+
+model subjects {
+  subject_id  String   @id @default(uuid())
+  name        String
+  faculty     String?
+  hod_user_id String
+  hod_user    users    @relation("hodSubjects", fields: [hod_user_id], references: [user_id])
+  courses     courses[]
 }
 
 model enrol {
-  enrol_id    String  @id @default(uuid())
+  enrol_id    String   @id @default(uuid())
   user_id     String
   course_id   String
   enrolled_at DateTime @default(now())
-  user        users   @relation(fields: [user_id], references: [user_id])
-  course      courses @relation(fields: [course_id], references: [course_id])
+  user        users    @relation(fields: [user_id], references: [user_id])
+  course      courses  @relation(fields: [course_id], references: [course_id])
 }

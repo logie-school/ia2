@@ -20,7 +20,7 @@ export function SearchForm({ searchTerm, setSearchTerm }: SearchFormProps) {
         </Label>
         <SidebarInput
           id="search"
-          placeholder="Search subjects..."
+          placeholder="Search admin page..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-8"

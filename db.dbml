@@ -27,9 +27,23 @@ Table role {
 }
 
 Table courses {
-  course_id     string [pk, not null]
-  course_name   string [not null]
-  course_desc   string [not null]
+  course_id       string [pk, not null]
+  course_name     string [not null]
+  course_desc     string [not null]
+  host_user_id    string [not null, ref: > users.user_id]
+  year_level      int    [not null]
+  subject_id      string [ref: > subjects.subject_id]
+  offering_date   string
+  location        string
+  cost            decimal
+  prereq          string
+}
+
+Table subjects {
+  subject_id   string [pk, not null]
+  name         string [not null]
+  faculty      string
+  hod_user_id  string [not null, ref: > users.user_id]
 }
 
 Table enrol {

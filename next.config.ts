@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export", // Enables static export
-  trailingSlash: true, // Ensures all paths end with a slash for static export
+  trailingSlash: true, // Ensures all paths end with a slash
   images: {
-    unoptimized: true, // Disables image optimization for static export
+    unoptimized: true, // Disables image optimization
   },
   eslint: {
     ignoreDuringBuilds: true, // Ignores ESLint errors during builds
