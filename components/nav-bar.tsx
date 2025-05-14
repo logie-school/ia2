@@ -103,11 +103,7 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
         setUserEmail(null);
         setIsAdmin(false);
         // Show a toast or alert
-        if (typeof window !== "undefined" && window.toast) {
-          window.toast.error?.("Invalid or tampered token. Please log in again.");
-        } else if (typeof window !== "undefined") {
-          toast.error("Invalid or tampered token. Please log in again.");
-        }
+        toast.error("Invalid or tampered token. Please log in again.");
       }
     }
   }, []);

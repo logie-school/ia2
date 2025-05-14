@@ -169,6 +169,27 @@ export default function UsersPage() {
     fetchData();
   }, []);
 
+  // Get current user's role from JWT in localStorage
+  const [currentUserRole, setCurrentUserRole] = React.useState<number>(5); // Default to lowest role
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = token.split(".")[1];
+        const padded = payload + "=".repeat((4 - payload.length % 4) % 4);
+        const decoded = JSON.parse(atob(padded));
+        if (typeof decoded.role === "number") {
+          setCurrentUserRole(decoded.role);
+        } else if (typeof decoded.role === "string" && !isNaN(Number(decoded.role))) {
+          setCurrentUserRole(Number(decoded.role));
+        }
+      } catch (e) {
+        setCurrentUserRole(5);
+      }
+    }
+  }, []);
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "user_id",
@@ -211,6 +232,16 @@ export default function UsersPage() {
       cell: ({ row }) => {
         const user = row.original;
         const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+        const [editRoleDialogOpen, setEditRoleDialogOpen] = React.useState(false);
+
+        // Always set selectedRole to user.role when dialog opens
+        const [selectedRole, setSelectedRole] = React.useState(user.role);
+
+        React.useEffect(() => {
+          if (editRoleDialogOpen) {
+            setSelectedRole(user.role);
+          }
+        }, [editRoleDialogOpen, user.role]);
 
         return (
           <DropdownMenu>
@@ -239,10 +270,18 @@ export default function UsersPage() {
                   Send Email
                 </DropdownMenuItem>
               </a>
-            <DropdownMenuItem>
-                <UserRoundPen />
-                Edit Role
-              </DropdownMenuItem>
+              {currentUserRole <= 2 && (
+                <DropdownMenuItem
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditRoleDialogOpen(true);
+                  }}
+                >
+                  <UserRoundPen />
+                  Edit Role
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 className="group hover:!bg-red-500/10 hover:!text-red-500"
                 onClick={e => {
@@ -254,6 +293,7 @@ export default function UsersPage() {
                 <Trash2 className="group-hover:text-red-500 transition-colors text-muted-foreground" />
                 Delete User
               </DropdownMenuItem>
+              {/* Delete Dialog */}
               <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
@@ -295,6 +335,77 @@ export default function UsersPage() {
                       Delete {user.fn}
                     </Button>
                   </div>
+                </DialogContent>
+              </Dialog>
+              {/* Edit Role Dialog */}
+              <Dialog open={editRoleDialogOpen} onOpenChange={setEditRoleDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit Role</DialogTitle>
+                    <DialogDescription>
+                      Edit <b>{user.fn} {user.sn}'s</b> role.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="edit-role" className="text-right">Role</Label>
+                      <Select
+                        value={selectedRole}
+                        onValueChange={setSelectedRole}
+                      >
+                        <SelectTrigger className="col-span-3 border rounded px-2 py-1 w-full">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Roles</SelectLabel>
+                            <SelectItem value="1">Principal</SelectItem>
+                            <SelectItem value="2">Admin</SelectItem>
+                            <SelectItem value="3">HOD</SelectItem>
+                            <SelectItem value="4">Teacher</SelectItem>
+                            <SelectItem value="5">User</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setEditRoleDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        setLoading(true); // Show "Saving..." on button
+                        try {
+                          const token = localStorage.getItem("token");
+                          const res = await fetch("/api/edit-role", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              token,
+                              user_id: user.user_id,
+                              new_role: selectedRole, // should be role_id (number as string)
+                            }),
+                          });
+                          const result = await res.json();
+                          if (res.ok) {
+                            toast.success("Role updated!");
+                            setEditRoleDialogOpen(false);
+                            // Refresh user list after update
+                            const response = await fetch("/api/users");
+                            setData(await response.json());
+                          } else {
+                            toast.error(result.message || "Failed to update role.");
+                          }
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      disabled={selectedRole === user.role || loading}
+                    >
+                      {loading ? "Saving..." : "Save"}
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </DropdownMenuContent>
