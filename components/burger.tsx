@@ -16,6 +16,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import Link from "next/link"
+import { toast } from "sonner"
 
 function Burger() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -24,19 +25,33 @@ function Burger() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = JSON.parse(atob(token.split(".")[1])) // Decode JWT payload
-        setUserEmail(decoded.email)
-        setIsLoggedIn(true)
-        setIsAdmin(decoded.role <= 3) // Check if the user is an admin
+        const parts = token.split(".");
+        if (parts.length !== 3 || !parts[1]) throw new Error("Malformed token");
+        const payload = parts[1];
+        const padded = payload + "=".repeat((4 - payload.length % 4) % 4);
+        const decoded = JSON.parse(atob(padded));
+        if (!decoded.email) throw new Error("Malformed token payload");
+        setUserEmail(decoded.email);
+        setIsLoggedIn(true);
+        setIsAdmin(decoded.role <= 3);
       } catch (error) {
-        console.error("Error decoding token:", error)
-        setIsLoggedIn(false)
+        // Remove token and reset state
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        setUserEmail(null);
+        setIsAdmin(false);
+        // Show a toast or alert
+        if (typeof window !== "undefined" && window.toast) {
+          window.toast.error?.("Invalid or tampered token. Please log in again.");
+        } else if (typeof window !== "undefined") {
+          toast.error("Invalid or tampered token. Please log in again.");
+        }
       }
     }
-  }, [])
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token")

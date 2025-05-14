@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import './nav-bar.css'
 import { LogOut, User, ShieldIcon, RotateCcw } from "lucide-react"
+import { toast } from "sonner"
 
 interface NavbarProps {
   bgColor?: string
@@ -62,7 +63,11 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
 
           if (response.ok) {
             localStorage.setItem("token", result.token); // Update the token in localStorage
-            const decoded = JSON.parse(atob(result.token.split(".")[1])); // Decode the new token
+            const newToken = result.token;
+            const payload = newToken.split(".")[1];
+            // Add padding if needed for base64
+            const padded = payload + "=".repeat((4 - payload.length % 4) % 4);
+            const decoded = JSON.parse(atob(padded));
             setUserEmail(decoded.email);
             setIsLoggedIn(true);
             setIsAdmin(decoded.role <= 3);
@@ -78,11 +83,39 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
     refreshUserToken();
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const parts = token.split(".");
+        if (parts.length !== 3 || !parts[1]) throw new Error("Malformed token");
+        const payload = parts[1];
+        const padded = payload + "=".repeat((4 - payload.length % 4) % 4);
+        const decoded = JSON.parse(atob(padded));
+        if (!decoded.email) throw new Error("Malformed token payload");
+        setUserEmail(decoded.email);
+        setIsLoggedIn(true);
+        setIsAdmin(decoded.role <= 3);
+      } catch (error) {
+        // Remove token and reset state
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        setUserEmail(null);
+        setIsAdmin(false);
+        // Show a toast or alert
+        if (typeof window !== "undefined" && window.toast) {
+          window.toast.error?.("Invalid or tampered token. Please log in again.");
+        } else if (typeof window !== "undefined") {
+          toast.error("Invalid or tampered token. Please log in again.");
+        }
+      }
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("token")
     setIsLoggedIn(false)
     setUserEmail(null)
-    router.push("/")
     location.reload()
   }
 
