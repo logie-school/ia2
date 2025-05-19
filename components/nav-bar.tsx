@@ -182,8 +182,8 @@ function Navbar({ bgColor, hidden, topmost }: NavbarProps) {
                   <ListItem href="/pano" title="Virtual Tour">
                     Get placed into a random location in the school and explore.
                   </ListItem>
-                  <ListItem href="/add-student" title="Add Student">
-                    Add a student to then enrol to courses.
+                  <ListItem href="/students" title="Your Students">
+                    Manage the students you have added.
                   </ListItem>
                 </ul>
               </NavigationMenuContent>

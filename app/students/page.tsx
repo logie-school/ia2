@@ -1,20 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
 import { Navbar } from "@/components/nav-bar";
+import { toast } from "sonner";
 import { X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
 
 type PotentialStudent = {
   id: string;
@@ -25,12 +17,25 @@ type PotentialStudent = {
   created: string;
 };
 
-export default function AddStudentPage() {
+type Enrolment = {
+  course_id: string;
+  course_name: string;
+  enrolled_at: string;
+};
+
+export default function StudentsPage() {
   const [students, setStudents] = useState<PotentialStudent[]>([]);
   const [form, setForm] = useState({ email: "", fn: "", mn: "", sn: "" });
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Enrolments dialog state
+  const [enrolDialogOpen, setEnrolDialogOpen] = useState<string | null>(null);
+  const [enrolments, setEnrolments] = useState<Enrolment[]>([]);
+  const [enrolmentsLoading, setEnrolmentsLoading] = useState(false);
+  const [removeDialog, setRemoveDialog] = useState<{ studentId: string; courseId: string } | null>(null);
+  const [removing, setRemoving] = useState(false);
 
   // Fetch students for this user
   const fetchStudents = async () => {
@@ -113,6 +118,54 @@ export default function AddStudentPage() {
     }
   };
 
+  // Fetch enrolments for a student
+  const handleSeeEnrolments = async (studentId: string) => {
+    setEnrolDialogOpen(studentId);
+    setEnrolmentsLoading(true);
+    setEnrolments([]);
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await fetch(`/api/enrolments?student_id=${studentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setEnrolments(await res.json());
+      } else {
+        setEnrolments([]);
+      }
+    } catch {
+      setEnrolments([]);
+    } finally {
+      setEnrolmentsLoading(false);
+    }
+  };
+
+  const handleRemoveEnrolment = async (studentId: string, courseId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const res = await fetch("/api/enrolments", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ student_id: studentId, course_id: courseId }),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        toast.success("Enrolment removed.");
+        // Refresh enrolments
+        handleSeeEnrolments(studentId);
+      } else {
+        toast.error(result.message || "Failed to remove enrolment.");
+      }
+    } catch {
+      toast.error("Failed to remove enrolment.");
+    }
+  };
+
   return (
     <div className="enrol-wrapper flex flex-col min-h-screen bg-background">
       <Navbar bgColor="#fff" />
@@ -126,7 +179,6 @@ export default function AddStudentPage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
-                  <Label htmlFor="email">Student Email</Label>
                   <Input
                     id="email"
                     name="email"
@@ -138,7 +190,6 @@ export default function AddStudentPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="fn">First Name</Label>
                   <Input
                     id="fn"
                     name="fn"
@@ -149,7 +200,6 @@ export default function AddStudentPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="mn">Middle Name (optional)</Label>
                   <Input
                     id="mn"
                     name="mn"
@@ -159,7 +209,6 @@ export default function AddStudentPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="sn">Surname</Label>
                   <Input
                     id="sn"
                     name="sn"
@@ -185,21 +234,31 @@ export default function AddStudentPage() {
             ) : (
               <ul className="space-y-2">
                 {students.map((s) => (
-                  <li key={s.id} className="border rounded hover:bg-muted transition-all hover:pl-6 p-4 flex flex-row items-center justify-between bg-card">
+                  <li key={s.id} className="border rounded p-3 flex flex-row items-center justify-between bg-card">
                     <div className="flex flex-col min-w-0">
-                      <span className="font-semibold truncate capitalize">{s.fn} {s.mn ? s.mn + " " : ""}{s.sn}</span>
+                      <span className="font-semibold truncate">{s.fn} {s.mn ? s.mn + " " : ""}{s.sn}</span>
                       <span className="text-sm text-muted-foreground truncate">{s.email}</span>
                       <span className="text-xs opacity-60">Added: {new Date(s.created).toLocaleString()}</span>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="ml-2 hover:bg-red-500 hover:text-white"
-                      onClick={() => setDeleteDialogOpen(s.id)}
-                      aria-label="Delete student"
-                    >
-                      <X />
-                    </Button>
+                    <div className="flex flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSeeEnrolments(s.id)}
+                      >
+                        Manage Enrolments
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="ml-2 hover:bg-red-500 hover:text-white"
+                        onClick={() => setDeleteDialogOpen(s.id)}
+                        aria-label="Delete student"
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                    {/* Delete Dialog */}
                     <Dialog
                       open={deleteDialogOpen === s.id}
                       onOpenChange={(open) => setDeleteDialogOpen(open ? s.id : null)}
@@ -208,7 +267,7 @@ export default function AddStudentPage() {
                         <DialogHeader>
                           <DialogTitle>Delete Student</DialogTitle>
                           <DialogDescription>
-                            Are you sure you want to delete <b>{s.fn}</b>? This action cannot be undone.
+                            Are you sure you want to delete <b>{s.fn} {s.sn}</b>? This action cannot be undone.
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -221,6 +280,77 @@ export default function AddStudentPage() {
                             disabled={deleteLoading}
                           >
                             {deleteLoading ? "Deleting..." : `Delete ${s.fn}`}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    {/* See Enrolments Dialog */}
+                    <Dialog
+                      open={enrolDialogOpen === s.id}
+                      onOpenChange={(open) => setEnrolDialogOpen(open ? s.id : null)}
+                    >
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Enrolments for {s.fn} {s.sn}</DialogTitle>
+                        </DialogHeader>
+                        {enrolmentsLoading ? (
+                          <div>Loading enrolments...</div>
+                        ) : enrolments.length === 0 ? (
+                          <div className="text-muted-foreground">No enrolments found.</div>
+                        ) : (
+                          <ul className="space-y-2">
+                            {enrolments.map((e) => (
+                              <li key={e.course_id} className="border rounded px-3 py-2 bg-muted flex items-center justify-between gap-2">
+                                <div>
+                                  <div className="font-semibold">{e.course_name}</div>
+                                  <div className="text-xs opacity-60">Enrolled: {new Date(e.enrolled_at).toLocaleString()}</div>
+                                </div>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => setRemoveDialog({ studentId: enrolDialogOpen!, courseId: e.course_id })}
+                                >
+                                  Remove
+                                </Button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setEnrolDialogOpen(null)}>
+                            Close
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                    {/* Remove Enrolment Dialog */}
+                    <Dialog
+                      open={!!removeDialog}
+                      onOpenChange={(open) => !open && setRemoveDialog(null)}
+                    >
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Remove Enrolment</DialogTitle>
+                          <DialogDescription>
+                            Are you sure you want to remove this enrolment? This action cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setRemoveDialog(null)}>
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            disabled={removing}
+                            onClick={async () => {
+                              if (!removeDialog) return;
+                              setRemoving(true);
+                              await handleRemoveEnrolment(removeDialog.studentId, removeDialog.courseId);
+                              setRemoving(false);
+                              setRemoveDialog(null);
+                            }}
+                          >
+                            {removing ? "Removing..." : "Remove"}
                           </Button>
                         </DialogFooter>
                       </DialogContent>

@@ -104,6 +104,9 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ message: "Not found or not allowed." }, { status: 404 });
     }
 
+    // Delete all enrolments for this student before deleting the student
+    await prisma.enrol.deleteMany({ where: { potential_students_id: id } });
+
     await prisma.potential_students.delete({ where: { id } });
     return NextResponse.json({ message: "Student deleted." }, { status: 200 });
   } catch (error) {
