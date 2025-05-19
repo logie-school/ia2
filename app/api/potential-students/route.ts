@@ -32,7 +32,7 @@ export async function GET(req: Request) {
 // Add a new potential student
 export async function POST(req: Request) {
   try {
-    const { email, fn, mn, sn } = await req.json();
+    const { email, fn, mn, sn, dob, year_level } = await req.json();
     const token = req.headers.get("authorization")?.replace("Bearer ", "");
     if (!token) return NextResponse.json({ message: "No token." }, { status: 401 });
 
@@ -43,8 +43,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid token." }, { status: 401 });
     }
 
-    if (!email || !fn || !sn) {
-      return NextResponse.json({ message: "Email, first name, and surname are required." }, { status: 400 });
+    if (!email || !fn || !sn || !dob || !year_level) {
+      return NextResponse.json({ message: "All fields are required." }, { status: 400 });
     }
 
     // Check if guardian exists
@@ -71,6 +71,8 @@ export async function POST(req: Request) {
         fn,
         mn,
         sn,
+        dob: new Date(dob),
+        year_level: Number(year_level),
         guardian_id: decoded.userId,
       },
     });

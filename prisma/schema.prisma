@@ -80,6 +80,8 @@ model potential_students {
   fn          String
   mn          String?
   sn          String
+  dob         DateTime
+  year_level  Int
   created     DateTime @default(now())
   guardian_id String
   guardian    users    @relation("UserPotentialStudents", fields: [guardian_id], references: [user_id])

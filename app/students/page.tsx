@@ -7,6 +7,34 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Navbar } from "@/components/nav-bar";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import dynamic from "next/dynamic";
+import { Badge } from "@/components/ui/badge";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type PotentialStudent = {
   id: string;
@@ -23,9 +51,22 @@ type Enrolment = {
   enrolled_at: string;
 };
 
+const FormSchema = z.object({
+  email: z.string().email(),
+  fn: z.string().min(1),
+  mn: z.string().optional(),
+  sn: z.string().min(1),
+  dob: z.date({ required_error: "A date of birth is required." }),
+  year_level: z
+    .number({ required_error: "Year level is required." })
+    .min(7, "Year level must be between 7 and 12")
+    .max(12, "Year level must be between 7 and 12"),
+});
+
+type FormValues = z.infer<typeof FormSchema>;
+
 export default function StudentsPage() {
   const [students, setStudents] = useState<PotentialStudent[]>([]);
-  const [form, setForm] = useState({ email: "", fn: "", mn: "", sn: "" });
   const [loading, setLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -53,12 +94,19 @@ export default function StudentsPage() {
     fetchStudents();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const form = useForm({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      email: "",
+      fn: "",
+      mn: "",
+      sn: "",
+      dob: undefined,
+      year_level: undefined,
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormValues) => {
     setLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
@@ -73,12 +121,22 @@ export default function StudentsPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...data,
+          dob: data.dob.toISOString(),
+        }),
       });
       const result = await res.json();
       if (res.ok) {
         toast.success("Student added!");
-        setForm({ email: "", fn: "", mn: "", sn: "" });
+        form.reset({
+          email: "",
+          fn: "",
+          mn: "",
+          sn: "",
+          dob: undefined,
+          year_level: undefined,
+        });
         fetchStudents();
       } else {
         toast.error(result.message || "Failed to add student.");
@@ -177,51 +235,186 @@ export default function StudentsPage() {
               <CardTitle>Add a new student</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div>
-                  <Input
-                    id="email"
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                  <FormField
+                    control={form.control}
                     name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="student@email.com"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="email" placeholder="student@email.com" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div>
-                  <Input
-                    id="fn"
+                  <FormField
+                    control={form.control}
                     name="fn"
-                    value={form.fn}
-                    onChange={handleChange}
-                    required
-                    placeholder="First Name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="First Name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div>
-                  <Input
-                    id="mn"
+                  <FormField
+                    control={form.control}
                     name="mn"
-                    value={form.mn}
-                    onChange={handleChange}
-                    placeholder="Middle Name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Middle Name (Optional)</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Middle Name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div>
-                  <Input
-                    id="sn"
+                  <FormField
+                    control={form.control}
                     name="sn"
-                    value={form.sn}
-                    onChange={handleChange}
-                    required
-                    placeholder="Surname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Surname</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Surname" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Adding..." : "Add Student"}
-                </Button>
-              </form>
+                  <FormField
+                    control={form.control}
+                    name="dob"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Date of birth</FormLabel>
+                        <FormControl>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                              label="Date of birth"
+                              value={field.value ? dayjs(field.value) : null}
+                              onChange={(date) => {
+                                field.onChange(date ? date.toDate() : null);
+                              }}
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  error: !!form.formState.errors.dob,
+                                  helperText: form.formState.errors.dob?.message,
+                                  InputProps: {
+                                    sx: {
+                                      borderRadius: '0.5rem', // match Input
+                                      backgroundColor: '#fff',
+                                      fontFamily: 'inherit',
+                                      fontSize: '1rem',
+                                      color: '#222',
+                                      boxSizing: 'border-box',
+                                      padding: '0 14px',
+                                    },
+                                  },
+                                  sx: {
+                                    width: '100%',
+                                    margin: 0,
+                                    padding: 0,
+                                    '& .MuiOutlinedInput-root': {
+                                      borderRadius: '0.5rem',
+                                      backgroundColor: '#fff',
+                                      fontFamily: 'inherit',
+                                      fontSize: '1rem',
+                                      color: '#222',
+                                      height: '44px',
+                                      boxShadow: 'none',
+                                      padding: 0,
+                                    },
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                      borderColor: '#e5e7eb',
+                                    },
+                                    '& .MuiInputBase-input': {
+                                      padding: 0,
+                                      paddingLeft: '14px',
+                                      fontFamily: 'inherit',
+                                      fontSize: '1rem',
+                                      color: '#222',
+                                      height: '44px',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                    },
+                                    '& .MuiInputBase-input::placeholder': {
+                                      color: '#a3a3a3',
+                                      opacity: 1,
+                                      fontFamily: 'inherit',
+                                      fontSize: '1rem',
+                                    },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                                      borderColor: '#a3a3a3',
+                                    },
+                                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                      borderColor: '#000',
+                                    },
+                                  },
+                                  inputProps: {
+                                    style: {
+                                      fontFamily: 'inherit',
+                                      fontSize: '1rem',
+                                      color: '#222',
+                                      height: '44px',
+                                      padding: 0,
+                                      paddingLeft: '14px',
+                                      boxSizing: 'border-box',
+                                    },
+                                  },
+                                },
+                                popper: {
+                                  sx: {
+                                    '& .MuiPaper-root': {
+                                      borderRadius: '0.5rem',
+                                      boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+                                      fontFamily: 'inherit',
+                                    },
+                                  },
+                                },
+                              }}
+                              disableFuture
+                              minDate={dayjs("1900-01-01")}
+                            />
+                          </LocalizationProvider>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="year_level"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Year Level</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min={7}
+                            max={12}
+                            placeholder="Year Level (7-12)"
+                            onChange={e => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Adding..." : "Add Student"}
+                  </Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>
@@ -233,18 +426,30 @@ export default function StudentsPage() {
               <div className="text-muted-foreground">No students added yet.</div>
             ) : (
               <ul className="space-y-2">
-                {students.map((s) => (
-                  <li key={s.id} className="border rounded p-3 flex flex-row items-center justify-between bg-card">
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-semibold truncate">{s.fn} {s.mn ? s.mn + " " : ""}{s.sn}</span>
-                      <span className="text-sm text-muted-foreground truncate">{s.email}</span>
-                      <span className="text-xs opacity-60">Added: {new Date(s.created).toLocaleString()}</span>
+                {students.map((student) => (
+                  <li key={student.id} className="border rounded p-3 flex flex-row items-center justify-between bg-card">
+                    <div className="flex flex-col">
+                      <div className="flex flex-row items-center gap-2">
+                        <div className="font-bold">{student.fn} {student.sn}</div>
+                        <div className="flex flex-row gap-2">
+                          <Badge>
+                            Year: {student.year_level}
+                          </Badge>
+                          <Badge>
+                            DOB: {student.dob ? new Date(student.dob).toLocaleDateString() : "N/A"}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted-foreground">{student.email}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Added: {new Date(student.created).toLocaleString()}
+                      </div>
                     </div>
                     <div className="flex flex-row gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleSeeEnrolments(s.id)}
+                        onClick={() => handleSeeEnrolments(student.id)}
                       >
                         Manage Enrolments
                       </Button>
@@ -252,7 +457,7 @@ export default function StudentsPage() {
                         variant="ghost"
                         size="icon"
                         className="ml-2 hover:bg-red-500 hover:text-white"
-                        onClick={() => setDeleteDialogOpen(s.id)}
+                        onClick={() => setDeleteDialogOpen(student.id)}
                         aria-label="Delete student"
                       >
                         <X />
@@ -260,14 +465,14 @@ export default function StudentsPage() {
                     </div>
                     {/* Delete Dialog */}
                     <Dialog
-                      open={deleteDialogOpen === s.id}
-                      onOpenChange={(open) => setDeleteDialogOpen(open ? s.id : null)}
+                      open={deleteDialogOpen === student.id}
+                      onOpenChange={(open) => setDeleteDialogOpen(open ? student.id : null)}
                     >
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
                           <DialogTitle>Delete Student</DialogTitle>
                           <DialogDescription>
-                            Are you sure you want to delete <b>{s.fn} {s.sn}</b>? This action cannot be undone.
+                            Are you sure you want to delete <b>{student.fn} {student.sn}</b>? This action cannot be undone.
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
@@ -276,22 +481,22 @@ export default function StudentsPage() {
                           </Button>
                           <Button
                             variant="destructive"
-                            onClick={() => handleDelete(s.id)}
+                            onClick={() => handleDelete(student.id)}
                             disabled={deleteLoading}
                           >
-                            {deleteLoading ? "Deleting..." : `Delete ${s.fn}`}
+                            {deleteLoading ? "Deleting..." : `Delete ${student.fn}`}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
                     {/* See Enrolments Dialog */}
                     <Dialog
-                      open={enrolDialogOpen === s.id}
-                      onOpenChange={(open) => setEnrolDialogOpen(open ? s.id : null)}
+                      open={enrolDialogOpen === student.id}
+                      onOpenChange={(open) => setEnrolDialogOpen(open ? student.id : null)}
                     >
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                          <DialogTitle>Enrolments for {s.fn} {s.sn}</DialogTitle>
+                          <DialogTitle>Enrolments for {student.fn} {student.sn}</DialogTitle>
                         </DialogHeader>
                         {enrolmentsLoading ? (
                           <div>Loading enrolments...</div>
