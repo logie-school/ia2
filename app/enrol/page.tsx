@@ -208,7 +208,7 @@ export default function EnrolPage() {
                       setDialogOpen(course.course_id);
                     }}
                   >
-                    Enrol in {course.course_name}
+                    Express intrest in {course.course_name}
                   </Button>
                   {/* Enrol Dialog */}
                   <Dialog open={dialogOpen === course.course_id} onOpenChange={(open) => setDialogOpen(open ? course.course_id : null)}>

@@ -432,10 +432,10 @@ export default function StudentsPage() {
                       <div className="flex flex-row items-center gap-2">
                         <div className="font-bold">{student.fn} {student.sn}</div>
                         <div className="flex flex-row gap-2">
-                          <Badge>
+                          <Badge variant="outline">
                             Year: {student.year_level}
                           </Badge>
-                          <Badge>
+                          <Badge variant="outline">
                             DOB: {student.dob ? new Date(student.dob).toLocaleDateString() : "N/A"}
                           </Badge>
                         </div>
@@ -494,7 +494,7 @@ export default function StudentsPage() {
                       open={enrolDialogOpen === student.id}
                       onOpenChange={(open) => setEnrolDialogOpen(open ? student.id : null)}
                     >
-                      <DialogContent className="sm:max-w-[425px]">
+                      <DialogContent className="sm:max-w-[625px]">
                         <DialogHeader>
                           <DialogTitle>Enrolments for {student.fn} {student.sn}</DialogTitle>
                         </DialogHeader>
