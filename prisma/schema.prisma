@@ -20,6 +20,7 @@ model users {
   enrol      enrol[]
   courses    courses[] @relation("hostedCourses")
   subjects   subjects[] @relation("hodSubjects")
+  potential_students potential_students[] @relation("UserPotentialStudents")
 }
 
 model auth {
@@ -31,9 +32,10 @@ model auth {
 }
 
 model role {
-  id    Int     @id @default(autoincrement())
+  id    Int     @id
   name  String  @unique
   users users[]
+  /// 1 = principle, 2 = admin, 3 = hod, 4 = teacher, 5 = user
 }
 
 model courses {
@@ -62,10 +64,24 @@ model subjects {
 }
 
 model enrol {
-  enrol_id    String   @id @default(uuid())
-  user_id     String
-  course_id   String
-  enrolled_at DateTime @default(now())
-  user        users    @relation(fields: [user_id], references: [user_id])
-  course      courses  @relation(fields: [course_id], references: [course_id])
+  enrol_id               String   @id @default(uuid())
+  user_id                String
+  potential_students_id  String?
+  course_id              String
+  enrolled_at            DateTime @default(now())
+  user                   users    @relation(fields: [user_id], references: [user_id])
+  course                 courses  @relation(fields: [course_id], references: [course_id])
+  potential_student      potential_students? @relation(fields: [potential_students_id], references: [id])
+}
+
+model potential_students {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  fn          String
+  mn          String?
+  sn          String
+  created     DateTime @default(now())
+  guardian_id String
+  guardian    users    @relation("UserPotentialStudents", fields: [guardian_id], references: [user_id])
+  enrol       enrol[]
 }

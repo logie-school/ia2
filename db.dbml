@@ -47,8 +47,18 @@ Table subjects {
 }
 
 Table enrol {
-  enrol_id     string [pk, not null]
-  user_id      string [not null, ref: > users.user_id]
-  course_id    string [not null, ref: > courses.course_id]
-  enrolled_at  date   [not null]
+  enrol_id             string [pk, not null]
+  user_id              string [not null, ref: > users.user_id]
+  potential_students_id string [ref: > potential_students.id]
+  course_id            string [not null, ref: > courses.course_id]
+  enrolled_at          date   [not null]
+}
+
+Table potential_students {
+  id           string [pk, not null]
+  fn           string [not null]
+  mn           string
+  sn           string [not null]
+  created      date   [not null]
+  guardian_id  string [not null, ref: > users.user_id]
 }
