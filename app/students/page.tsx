@@ -43,6 +43,8 @@ type PotentialStudent = {
   mn?: string;
   sn: string;
   created: string;
+  dob: string;
+  year_level: number;
 };
 
 type Enrolment = {

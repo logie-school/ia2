@@ -237,7 +237,7 @@ export default function EnrolmentsPage() {
           <DialogHeader>
             <DialogTitle>Delete Enrolment</DialogTitle>
             <DialogDescription>
-              Are you sure you want to unenrol <b>{selectedEnrolment?.student_name} from {selectedEnrolment.course_name}</b>? This action cannot be undone.
+              Are you sure you want to unenrol <b>{selectedEnrolment?.student_name} from {selectedEnrolment?.course_name}</b>? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
